@@ -6,5 +6,9 @@ module.exports = {
   extends: ['plugin:vue/vue3-essential', 'eslint:recommended', 'plugin:prettier/recommended'],
   parserOptions: {
     ecmaVersion: 'latest'
+  },
+  rules: {
+    'linebreak-style': ['error', 'unix']
+    // 'linebreak-style': 'off'
   }
 }
