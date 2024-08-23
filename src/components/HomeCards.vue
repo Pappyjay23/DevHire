@@ -7,13 +7,15 @@ const cards = ref([
     title: 'For Developers',
     description: 'Find the right job',
     buttonTitle: 'Browse Jobs',
-    isDeveloper: true
+    isDeveloper: true,
+    link: '/jobs'
   },
   {
     title: 'For Employers',
     description: 'Find the right person for your job',
     buttonTitle: 'Add Job',
-    isDeveloper: false
+    isDeveloper: false,
+    link: '/add-job'
   }
 ])
 </script>
@@ -28,6 +30,7 @@ const cards = ref([
         :description="card.description"
         :buttonTitle="card.buttonTitle"
         :isDeveloper="card.isDeveloper"
+        :link="card.link"
       />
     </div>
   </section>

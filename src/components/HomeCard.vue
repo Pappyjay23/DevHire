@@ -3,7 +3,8 @@ defineProps({
   title: String,
   description: String,
   buttonTitle: String,
-  isDeveloper: Boolean
+  isDeveloper: Boolean,
+  link: String
 })
 </script>
 
@@ -16,12 +17,14 @@ defineProps({
       {{ title }}
     </h2>
     <p class="text-[90%]">{{ description }}</p>
-    <button
-      :class="isDeveloper ? 'bg-[#127780] text-[#fff]' : 'bg-[#fff] text-[#127780]'"
-      class="py-3 px-8 rounded-[4px] font-semibold"
+    <RouterLink :to="link">
+      <button
+        :class="isDeveloper ? 'bg-[#127780] text-[#fff]' : 'bg-[#fff] text-[#127780]'"
+        class="py-3 px-8 rounded-[4px] font-semibold"
+      >
+        {{ buttonTitle }}
+      </button></RouterLink
     >
-      {{ buttonTitle }}
-    </button>
   </div>
 </template>
 
