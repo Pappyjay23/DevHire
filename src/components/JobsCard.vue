@@ -38,7 +38,7 @@ const truncateString = (str, num) => {
       </p>
       <p class="font-semibold">{{ salary }}/year</p>
     </div>
-    <RouterLink :to="link">
+    <RouterLink to="/">
       <button class="py-3 px-8 rounded-[4px] font-semibold bg-[#127780] text-[#fff]">
         {{ buttonTitle }}
       </button></RouterLink
