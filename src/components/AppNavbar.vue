@@ -28,7 +28,7 @@ const toggleNav = () => (isOpen.value = !isOpen.value)
 </script>
 
 <template>
-  <nav class="bg-[#127780] text-white border-b border-[#cdcdcd] fixed top-0 left-0 w-full z-[20]">
+  <nav class="bg-[#127780] text-white border-b border-[#cafbff] fixed top-0 left-0 w-full z-[20]">
     <div class="max-w-[1200px] mx-auto flex justify-between p-4 items-center">
       <RouterLink to="/">
         <div class="flex gap-2 items-center cursor-pointer font-semibold">
