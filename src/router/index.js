@@ -17,7 +17,7 @@ const router = createRouter({
     {
       path: '/post-job',
       name: 'post-job',
-      component: () => import('../views/AddJobView.vue')
+      component: () => import('../views/PostJobView.vue')
     },
     {
       path: '/:catchAll(.*)',
