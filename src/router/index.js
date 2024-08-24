@@ -12,12 +12,23 @@ const router = createRouter({
     {
       path: '/jobs',
       name: 'jobs',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import('../views/JobsView.vue')
+    },
+    {
+      path: '/post-job',
+      name: 'post-job',
+      component: () => import('../views/AddJobView.vue')
+    },
+    {
+      path: '/:catchAll(.*)',
+      name: 'not-found',
+      component: () => import('../views/NotFoundView.vue')
     }
-  ]
+  ],
+  scrollBehavior() {
+    // Always scroll to top
+    return { top: 0 }
+  }
 })
 
 export default router

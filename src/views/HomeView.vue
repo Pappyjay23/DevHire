@@ -12,7 +12,7 @@ const description = ref(
 <template>
   <AppHero :title="title" :description="description" />
   <HomeCards />
-  <AppJobs />
+  <AppJobs limit="4" />
 </template>
 
 <style></style>

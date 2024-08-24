@@ -2,5 +2,7 @@
 import AppJobs from '@/components/AppJobs.vue'
 </script>
 <template>
-  <AppJobs />
+  <div class="bg-[#127780] min-h-screen">
+    <AppJobs />
+  </div>
 </template>

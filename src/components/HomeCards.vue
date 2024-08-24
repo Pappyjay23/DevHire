@@ -5,7 +5,7 @@ import HomeCard from './HomeCard.vue'
 const cards = ref([
   {
     title: 'For Developers',
-    description: 'Find the right job',
+    description: 'Browse through our jobs and find the right one for you',
     buttonTitle: 'Browse Jobs',
     isDeveloper: true,
     link: '/jobs'
@@ -13,16 +13,16 @@ const cards = ref([
   {
     title: 'For Employers',
     description: 'Find the right person for your job',
-    buttonTitle: 'Add Job',
+    buttonTitle: 'Post Job',
     isDeveloper: false,
-    link: '/add-job'
+    link: '/post-job'
   }
 ])
 </script>
 
 <template>
   <section class="bg-gray-100 p-5">
-    <div class="flex gap-4 w-full justify-center">
+    <div class="flex flex-wrap gap-4 w-full justify-center">
       <HomeCard
         v-for="(card, i) in cards"
         :key="i"
