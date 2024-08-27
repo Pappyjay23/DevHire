@@ -9,7 +9,8 @@ defineProps({
   companyDescription: String,
   companyEmail: String,
   companyPhone: String,
-  buttonTitle: String
+  buttonTitle: String,
+  index: Number
 })
 
 const truncateString = (str, num) => {
@@ -23,7 +24,7 @@ const truncateString = (str, num) => {
 
 <template>
   <div
-    class="bg-[#fff] text-[#127780] px-5 py-10 rounded-[4px] w-full md:w-[40%] lg:w-[30%] flex flex-col gap-4 items-center shadow-md text-center"
+    class="bg-transparent backdrop-blur text-[#fff] border border-[#fff] px-5 py-10 rounded-[20px] w-full md:w-[40%] lg:w-[30%] flex flex-col gap-4 items-center shadow-md text-center"
   >
     <h2 class="text-xl font-semibold">
       {{ type }}
@@ -38,8 +39,10 @@ const truncateString = (str, num) => {
       </p>
       <p class="font-semibold">{{ salary }}/year</p>
     </div>
-    <RouterLink to="/">
-      <button class="py-3 px-8 rounded-[4px] font-semibold bg-[#127780] text-[#fff]">
+    <RouterLink :to="`/jobs/${index + 1}`">
+      <button
+        class="py-3 px-8 rounded-[4px] font-semibold bg-white border border-[#fff] text-[#127780]"
+      >
         {{ buttonTitle }}
       </button></RouterLink
     >

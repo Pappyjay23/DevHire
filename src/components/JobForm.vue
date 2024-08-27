@@ -1,14 +1,16 @@
 <script setup>
-const formFieldStyles = 'border border-[#127780] p-2 outline-none text-[90%]'
+const formFieldStyles = 'border-b border-[#fff] p-2 outline-none text-[90%]'
 </script>
 
 <template>
-  <div class="p-5 bg-white flex justify-center w-full md:w-[80%] lg:w-[50%] mx-auto rounded-md">
-    <div class="text-[#127780] w-full">
-      <h1 class="text-2xl lg:text-3xl font-bold text-center mb-3 lg:mb-4">Post Job</h1>
+  <div
+    class="p-5 bg-transparent backdrop-blur flex justify-center w-full md:w-[80%] lg:w-[50%] mx-auto rounded-md border border-[#fff]"
+  >
+    <div class="text-[#fff] w-full">
+      <h1 class="text-2xl lg:text-3xl text-white font-bold text-center mb-3 lg:mb-4">Post Job</h1>
       <form action="" class="flex flex-col gap-4">
         <div class="flex flex-col gap-2">
-          <label for="job-type" name="job-type" class="font-bold">Job Type</label>
+          <label for="job-type" name="job-type" class="font-bold text-white">Job Type</label>
           <select name="job-type" id="job-type" :class="formFieldStyles" class="cursor-pointer">
             <option value="Full-Time">Full-Time</option>
             <option value="Part-Time">Part-Time</option>
@@ -17,7 +19,9 @@ const formFieldStyles = 'border border-[#127780] p-2 outline-none text-[90%]'
           </select>
         </div>
         <div class="flex flex-col gap-2">
-          <label for="job-title" name="job-title" class="font-bold">Job Listing Title</label>
+          <label for="job-title" name="job-title" class="font-bold text-white"
+            >Job Listing Title</label
+          >
           <input
             type="text"
             name="job-title"
@@ -27,7 +31,9 @@ const formFieldStyles = 'border border-[#127780] p-2 outline-none text-[90%]'
           />
         </div>
         <div class="flex flex-col gap-2">
-          <label for="description" name="description" class="font-bold">Description</label>
+          <label for="description" name="description" class="font-bold text-white"
+            >Description</label
+          >
           <textarea
             rows="3"
             type="text"
@@ -38,7 +44,7 @@ const formFieldStyles = 'border border-[#127780] p-2 outline-none text-[90%]'
           />
         </div>
         <div class="flex flex-col gap-2">
-          <label for="salary" name="salary" class="font-bold">Salary</label>
+          <label for="salary" name="salary" class="font-bold text-white">Salary</label>
           <select name="salary" id="salary" :class="formFieldStyles" class="cursor-pointer">
             <option value="Under $50K">under $50K</option>
             <option value="$50K - $60K">$50 - $60K</option>
@@ -54,7 +60,7 @@ const formFieldStyles = 'border border-[#127780] p-2 outline-none text-[90%]'
           </select>
         </div>
         <div class="flex flex-col gap-2">
-          <label for="location" name="location" class="font-bold">Location</label>
+          <label for="location" name="location" class="font-bold text-white">Location</label>
           <input
             type="text"
             name="location"
@@ -64,7 +70,9 @@ const formFieldStyles = 'border border-[#127780] p-2 outline-none text-[90%]'
           />
         </div>
         <div class="flex flex-col gap-2">
-          <label for="company-name" name="company-name" class="font-bold">Company Name</label>
+          <label for="company-name" name="company-name" class="font-bold text-white"
+            >Company Name</label
+          >
           <input
             type="text"
             name="company-name"
@@ -74,7 +82,7 @@ const formFieldStyles = 'border border-[#127780] p-2 outline-none text-[90%]'
           />
         </div>
         <div class="flex flex-col gap-2">
-          <label for="company-description" name="company-description" class="font-bold"
+          <label for="company-description" name="company-description" class="font-bold text-white"
             >Company Description</label
           >
           <textarea
@@ -87,7 +95,9 @@ const formFieldStyles = 'border border-[#127780] p-2 outline-none text-[90%]'
           />
         </div>
         <div class="flex flex-col gap-2">
-          <label for="company-email" name="company-email" class="font-bold">Contact Email</label>
+          <label for="company-email" name="company-email" class="font-bold text-white"
+            >Contact Email</label
+          >
           <input
             type="email"
             name="company-email"
@@ -97,7 +107,9 @@ const formFieldStyles = 'border border-[#127780] p-2 outline-none text-[90%]'
           />
         </div>
         <div class="flex flex-col gap-2">
-          <label for="company-phone" name="company-phone" class="font-bold">Contact Phone</label>
+          <label for="company-phone" name="company-phone" class="font-bold text-white"
+            >Contact Phone</label
+          >
           <input
             type="tel"
             name="company-phone"
@@ -107,7 +119,7 @@ const formFieldStyles = 'border border-[#127780] p-2 outline-none text-[90%]'
           />
         </div>
         <button
-          class="py-3 px-8 rounded-[50px] w-[80%] md:w-[50%] lg:[40%] mx-auto font-semibold bg-[#127780] text-[#fff]"
+          class="py-3 px-8 rounded-[50px] w-[80%] md:w-[50%] lg:[40%] mx-auto font-semibold bg-[#fff] text-[#127780]"
         >
           Post Job
         </button>
@@ -116,4 +128,19 @@ const formFieldStyles = 'border border-[#127780] p-2 outline-none text-[90%]'
   </div>
 </template>
 
-<style></style>
+<style scoped>
+select,
+select option,
+textarea,
+input {
+  background: transparent !important;
+}
+
+::placeholder {
+  color: white !important;
+}
+
+option {
+  color: #127780 !important;
+}
+</style>

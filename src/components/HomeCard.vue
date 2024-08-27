@@ -11,7 +11,7 @@ defineProps({
 <template>
   <div
     :class="isDeveloper ? 'bg-[#fff] text-[#127780]' : 'bg-[#127780] text-[#fff]'"
-    class="px-5 py-10 rounded-[4px] w-full md:w-[50%] lg:w-[30%] flex flex-col gap-4 items-center shadow-md text-center"
+    class="px-5 py-10 rounded-[12px] w-full md:w-[50%] lg:w-[30%] flex flex-col gap-4 items-center shadow-md text-center"
   >
     <h2 class="text-2xl font-bold">
       {{ title }}

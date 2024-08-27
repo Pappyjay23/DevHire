@@ -1,6 +1,6 @@
 <script setup>
 import Logo from '@/assets/logo.svg'
-import HeroBg from '@/assets/hero-bg.jpg'
+import MobileNavBg from '@/assets/job-bg.jpg'
 import { ref } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 const navItems = [
@@ -61,10 +61,10 @@ const toggleNav = () => (isOpen.value = !isOpen.value)
   </nav>
   <div
     class="fixed w-full left-0 h-screen bg-cover bg-center lg:hidden transition-all duration-700 text-white z-[40]"
-    :class="isOpen ? 'top-0 opacity-[1]' : 'top-[-1000px] opacity-1'"
-    :style="{ backgroundImage: `url(${HeroBg})` }"
+    :class="isOpen ? 'top-0 opacity-[1]' : 'top-[-2000px] opacity-1'"
+    :style="{ backgroundImage: `url(${MobileNavBg})` }"
   >
-    <div class="p-4 z-50">
+    <div class="p-4 z-50 backdrop-blur h-full">
       <div class="flex justify-between items-center">
         <RouterLink to="/" @click="toggleNav">
           <div class="flex gap-2 items-center cursor-pointer font-semibold">
@@ -93,8 +93,8 @@ const toggleNav = () => (isOpen.value = !isOpen.value)
       </ul>
     </div>
     <div
-      class="bg-[#000] fixed left-0 w-full h-screen transition-all duration-700 opacity-80 -z-10"
-      :class="isOpen ? 'top-0' : 'top-[-1000px]'"
+      class="bg-[#000] fixed left-0 w-full h-screen transition-all duration-700 opacity-40 -z-10"
+      :class="isOpen ? 'top-0' : 'top-[-2000px]'"
     ></div>
   </div>
 </template>

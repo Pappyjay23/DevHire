@@ -9,12 +9,24 @@ import {
   RiMenuFill,
   RiMenu2Line,
   IoLocationSharp,
-  MdWarningRound
+  MdWarningRound,
+  BiArrowLeftShort,
+  IoMail,
+  MdContactphoneRound
 } from 'oh-vue-icons/icons'
 
 const app = createApp(App)
 
-addIcons(MdCloseTwotone, RiMenuFill, RiMenu2Line, IoLocationSharp, MdWarningRound)
+addIcons(
+  MdCloseTwotone,
+  RiMenuFill,
+  RiMenu2Line,
+  IoLocationSharp,
+  MdWarningRound,
+  BiArrowLeftShort,
+  IoMail,
+  MdContactphoneRound
+)
 
 app.use(router)
 
