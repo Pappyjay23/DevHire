@@ -1,7 +1,10 @@
 <script setup>
 import { jobs } from '@/data/jobs'
+import { useRoute } from 'vue-router'
 
-const job = jobs[0]
+const route = useRoute()
+const jobId = route.params.id
+const job = jobs[jobId - 1]
 </script>
 <template>
   <div
