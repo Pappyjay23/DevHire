@@ -1,9 +1,57 @@
 <script setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import JobsCard from './JobsCard.vue'
 import { computed } from 'vue'
 import JobsBg from '@/assets/hero-bg.jpg'
-import { jobs } from '@/data/jobs.js'
+import axios from 'axios'
+
+const options = {
+  method: 'GET',
+  url: 'https://linkedin-data-scraper.p.rapidapi.com/search_jobs',
+  params: {
+    query: 'Software developer',
+    page: '1',
+    sortBy: 'DD'
+  },
+  headers: {
+    'x-rapidapi-key': '6e83667247mshd69d9d7f98a5cd9p110252jsne2b73f83ca2b',
+    'x-rapidapi-host': 'linkedin-data-scraper.p.rapidapi.com'
+  }
+}
+
+const jobs = ref([])
+
+// Function to fetch data from API and update localStorage
+const fetchData = async () => {
+  try {
+    const response = await axios.request(options)
+    const jobData = response.data.response.jobs
+    jobs.value = jobData
+
+    // Save the jobs data to localStorage
+    localStorage.setItem('jobs', JSON.stringify(jobData))
+
+    console.log(response.data)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+// Function to load jobs from localStorage or fetch from API
+const loadJobs = () => {
+  const storedJobs = JSON.parse(localStorage.getItem('jobs'))
+  if (storedJobs && storedJobs.length > 0) {
+    jobs.value = storedJobs
+  } else {
+    fetchData()
+  }
+}
+
+// Watch the route and update job based on index
+
+onMounted(() => {
+  loadJobs() // Load jobs from localStorage or fetch them if not present
+})
 
 defineProps({
   limit: Number
@@ -11,7 +59,7 @@ defineProps({
 
 const input = ref('')
 const filteredJobs = computed(() => {
-  return jobs.filter((job) => {
+  return jobs.value.filter((job) => {
     return job.title.toLowerCase().includes(input.value.toLowerCase())
   })
 })
@@ -35,18 +83,20 @@ const filteredJobs = computed(() => {
       />
       <div class="flex gap-4 w-full justify-center flex-wrap">
         <JobsCard
-          v-for="(card, index) in filteredJobs.slice(0, limit || filteredJobs.length)"
-          :key="card"
+          v-for="(job, index) in filteredJobs.slice(0, limit || filteredJobs.length)"
+          :key="job"
           :index="index"
-          :title="card.title"
-          :type="card.type"
-          :description="card.description"
-          :location="card.location"
-          :salary="card.salary"
-          :companyName="card.company.name"
-          :companyDescription="card.company.description"
-          :companyEmail="card.company.contactEmail"
-          :companyPhone="card.company.contactPhone"
+          :title="job.title"
+          :type="job.formattedEmploymentStatus"
+          :workplace="job.workplaceTypes.join(', ')"
+          :description="job.jobDescription"
+          :location="job.formattedLocation"
+          :experienceLevel="job.formattedExperienceLevel"
+          :companyName="job.company_data.name"
+          :companyDescription="job.company_data.description"
+          :companyUrl="job.company_data.url"
+          :jobApplyUrl="job.jobPostingUrl"
+          :jobListDate="job.listedAt"
           buttonTitle="Read More"
         />
       </div>

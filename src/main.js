@@ -11,8 +11,7 @@ import {
   IoLocationSharp,
   MdWarningRound,
   BiArrowLeftShort,
-  IoMail,
-  MdContactphoneRound
+  BiArrowUpRight
 } from 'oh-vue-icons/icons'
 
 const app = createApp(App)
@@ -24,8 +23,7 @@ addIcons(
   IoLocationSharp,
   MdWarningRound,
   BiArrowLeftShort,
-  IoMail,
-  MdContactphoneRound
+  BiArrowUpRight
 )
 
 app.use(router)
