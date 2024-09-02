@@ -4,6 +4,7 @@ import JobsCard from './JobsCard.vue'
 import { computed } from 'vue'
 import JobsBg from '@/assets/hero-bg.jpg'
 import axios from 'axios'
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 
 const options = {
   method: 'GET',
@@ -20,6 +21,7 @@ const options = {
 }
 
 const jobs = ref([])
+const isLoading = ref(true)
 
 // Function to fetch data from API and update localStorage
 const fetchData = async () => {
@@ -30,8 +32,7 @@ const fetchData = async () => {
 
     // Save the jobs data to localStorage
     localStorage.setItem('jobs', JSON.stringify(jobData))
-
-    console.log(response.data)
+    isLoading.value = false
   } catch (error) {
     console.error(error)
   }
@@ -42,12 +43,11 @@ const loadJobs = () => {
   const storedJobs = JSON.parse(localStorage.getItem('jobs'))
   if (storedJobs && storedJobs.length > 0) {
     jobs.value = storedJobs
+    isLoading.value = false
   } else {
     fetchData()
   }
 }
-
-// Watch the route and update job based on index
 
 onMounted(() => {
   loadJobs() // Load jobs from localStorage or fetch them if not present
@@ -63,6 +63,9 @@ const filteredJobs = computed(() => {
     return job.title.toLowerCase().includes(input.value.toLowerCase())
   })
 })
+
+const color = '#fff'
+const size = '20px'
 </script>
 
 <template>
@@ -81,7 +84,10 @@ const filteredJobs = computed(() => {
         type="search"
         v-model="input"
       />
-      <div class="flex gap-4 w-full justify-center flex-wrap">
+      <div v-if="isLoading" class="mt-10">
+        <PulseLoader :color="color" :size="size" />
+      </div>
+      <div v-else class="flex gap-4 w-full justify-center flex-wrap">
         <JobsCard
           v-for="(job, index) in filteredJobs.slice(0, limit || filteredJobs.length)"
           :key="job"
@@ -100,7 +106,7 @@ const filteredJobs = computed(() => {
           buttonTitle="Read More"
         />
       </div>
-      <RouterLink to="/jobs">
+      <RouterLink to="/jobs" v-if="!isLoading">
         <button
           v-if="limit"
           class="bg-[#fff] text-[#127780] py-3 px-8 rounded-[10px] font-semibold mt-5"

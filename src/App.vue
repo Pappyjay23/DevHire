@@ -1,6 +1,12 @@
 <script setup>
 import AppNavbar from '@/components/AppNavbar.vue'
+import { onMounted } from 'vue'
 import { RouterView } from 'vue-router'
+
+// Clear local storage when the entire app mounts
+onMounted(() => {
+  localStorage.removeItem('jobs') // Clear the jobs data from local storage
+})
 </script>
 
 <template>

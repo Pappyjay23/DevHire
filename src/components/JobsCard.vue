@@ -38,7 +38,7 @@ const markdown = new MarkdownIt({
       {{ type }}
     </h2>
     <h2 class="text-2xl font-bold min-h-[100px]">
-      {{ title }}
+      {{ truncateString(title, 40) }}
     </h2>
     <h2 class="text-2xl font-bold">
       {{ workplace }}
