@@ -33,6 +33,21 @@ const markdown = new MarkdownIt({
     v-if="job"
     class="bg-transparent backdrop-blur text-[#fff] border border-[#fff] px-5 py-10 rounded-[20px] w-full md:w-[40%] lg:w-[50%] mx-auto shadow-md mt-5"
   >
+    <div class="flex flex-row gap-4 w-full justify-end mb-8 lg:mb-4">
+      <RouterLink :to="`/jobs`">
+        <button
+          class="p-[6px] rounded-[4px] font-semibold bg-white border border-[#fff] text-[#127780] flex justify-center items-center gap-1"
+        >
+          <span class="font-bold">Edit</span> <v-icon name="fa-edit" scale="1.2"></v-icon></button
+      ></RouterLink>
+      <RouterLink :to="`/jobs`">
+        <button
+          class="p-[6px] rounded-[4px] font-semibold bg-white border border-[#fff] text-red-600 flex justify-center items-center gap-1"
+        >
+          <span class="font-bold">Delete</span>
+          <v-icon name="bi-trash-fill" scale="1.2"></v-icon></button
+      ></RouterLink>
+    </div>
     <div class="w-[80%] mx-auto flex flex-col items-start gap-4">
       <h2 class="text-3xl font-bold text-center">
         {{ job.title }}
@@ -60,8 +75,12 @@ const markdown = new MarkdownIt({
           v-html="truncateString(markdown.render(job.jobDescription), 1000)"
         ></p>
         <a class="font-bold" target="'_blank" :href="`${job.jobPostingUrl}`">
-          Apply Here <v-icon name="bi-arrow-up-right"></v-icon
-        ></a>
+          <button
+            class="py-3 px-6 rounded-[4px] font-semibold bg-white border border-[#fff] text-[#127780] text-[90%]"
+          >
+            Apply Here <v-icon name="bi-arrow-up-right"></v-icon>
+          </button>
+        </a>
 
         <h2 class="text-[1.1rem] font-semibold text-center mt-5">Company Info</h2>
         <h2 class="text-2xl font-bold">
@@ -72,24 +91,12 @@ const markdown = new MarkdownIt({
           v-html="truncateString(markdown.render(job.company_data.description), 400)"
         ></p>
         <a class="font-bold" target="'_blank" :href="`${job.company_data.url}`">
-          Read more <v-icon name="bi-arrow-up-right"></v-icon
-        ></a>
-      </div>
-      <div class="flex flex-col lg:flex-row gap-4 w-full justify-center">
-        <RouterLink :to="`/jobs`">
           <button
-            class="py-3 px-8 rounded-[4px] font-semibold bg-white border border-[#fff] text-[#127780]"
+            class="py-3 px-6 rounded-[4px] font-semibold bg-white border border-[#fff] text-[#127780] text-[90%]"
           >
-            Edit Job
-          </button></RouterLink
-        >
-        <RouterLink :to="`/jobs`">
-          <button
-            class="py-3 px-8 rounded-[4px] font-semibold bg-white border border-[#fff] text-red-600"
-          >
-            Delete Job
-          </button></RouterLink
-        >
+            Read more <v-icon name="bi-arrow-up-right"></v-icon>
+          </button>
+        </a>
       </div>
     </div>
   </div>
