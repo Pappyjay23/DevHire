@@ -1,56 +1,16 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import JobsCard from './JobsCard.vue'
-import { computed } from 'vue'
 import JobsBg from '@/assets/hero-bg.jpg'
-import axios from 'axios'
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
+import { useJobsStore } from '@/stores/jobs'
 
-const options = {
-  method: 'GET',
-  url: 'https://linkedin-data-scraper.p.rapidapi.com/search_jobs',
-  params: {
-    query: 'Software developer',
-    page: '1',
-    sortBy: 'DD'
-  },
-  headers: {
-    'x-rapidapi-key': '6e83667247mshd69d9d7f98a5cd9p110252jsne2b73f83ca2b',
-    'x-rapidapi-host': 'linkedin-data-scraper.p.rapidapi.com'
-  }
-}
-
-const jobs = ref([])
-const isLoading = ref(true)
-
-// Function to fetch data from API and update localStorage
-const fetchData = async () => {
-  try {
-    const response = await axios.request(options)
-    const jobData = response.data.response.jobs
-    jobs.value = jobData
-
-    // Save the jobs data to localStorage
-    localStorage.setItem('jobs', JSON.stringify(jobData))
-    isLoading.value = false
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-// Function to load jobs from localStorage or fetch from API
-const loadJobs = () => {
-  const storedJobs = JSON.parse(localStorage.getItem('jobs'))
-  if (storedJobs && storedJobs.length > 0) {
-    jobs.value = storedJobs
-    isLoading.value = false
-  } else {
-    fetchData()
-  }
-}
+const jobsStore = useJobsStore()
 
 onMounted(() => {
-  loadJobs() // Load jobs from localStorage or fetch them if not present
+  if (jobsStore.jobs.length === 0) {
+    jobsStore.fetchJobs()
+  }
 })
 
 defineProps({
@@ -59,7 +19,7 @@ defineProps({
 
 const input = ref('')
 const filteredJobs = computed(() => {
-  return jobs.value.filter((job) => {
+  return jobsStore.jobs.filter((job) => {
     return job.title.toLowerCase().includes(input.value.toLowerCase())
   })
 })
@@ -69,7 +29,6 @@ const size = '20px'
 </script>
 
 <template>
-  <!--  <section class="p-5 bg-[#127780] text-center"> -->
   <section
     class="p-5 text-center bg-fixed bg-cover bg-center relative z-10 min-h-screen h-full"
     :style="{ backgroundImage: `url(${limit && JobsBg})` }"
@@ -84,7 +43,7 @@ const size = '20px'
         type="search"
         v-model="input"
       />
-      <div v-if="isLoading" class="mt-10">
+      <div v-if="jobsStore.isLoading" class="mt-10">
         <PulseLoader :color="color" :size="size" />
       </div>
       <div v-else class="flex gap-4 w-full justify-center flex-wrap">
@@ -106,14 +65,14 @@ const size = '20px'
           buttonTitle="Read More"
         />
       </div>
-      <RouterLink to="/jobs" v-if="!isLoading">
+      <RouterLink to="/jobs" v-if="!jobsStore.isLoading">
         <button
           v-if="limit"
           class="bg-[#fff] text-[#127780] py-3 px-8 rounded-[10px] font-semibold mt-5"
         >
           View All
-        </button></RouterLink
-      >
+        </button>
+      </RouterLink>
     </div>
   </section>
 </template>

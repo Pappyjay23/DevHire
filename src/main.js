@@ -1,6 +1,7 @@
 import './assets/main.css'
 
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import { OhVueIcon, addIcons } from 'oh-vue-icons'
@@ -17,6 +18,7 @@ import {
 } from 'oh-vue-icons/icons'
 
 const app = createApp(App)
+const pinia = createPinia()
 
 addIcons(
   MdCloseTwotone,
@@ -31,6 +33,7 @@ addIcons(
 )
 
 app.use(router)
+app.use(pinia)
 
 app.component('v-icon', OhVueIcon)
 

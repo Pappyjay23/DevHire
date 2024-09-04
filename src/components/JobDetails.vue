@@ -2,6 +2,9 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import MarkdownIt from 'markdown-it'
+import { useJobsStore } from '@/stores/jobs'
+
+const jobsStore = useJobsStore()
 
 const route = useRoute()
 const jobId = parseInt(route.params.id)
@@ -12,7 +15,7 @@ const job = computed(() => {
 
 onMounted(() => {
   // Retrieve jobs data from localStorage
-  const storedJobs = JSON.parse(localStorage.getItem('jobs')) || []
+  const storedJobs = jobsStore.jobs || []
   jobs.value = storedJobs
 })
 
