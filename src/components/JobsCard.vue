@@ -10,7 +10,8 @@ defineProps({
   companyUrl: String,
   jobApplyUrl: String,
   jobListDate: String,
-  buttonTitle: String
+  buttonTitle: String,
+  activeTab: String
 })
 
 const truncateString = (str, num) => {
@@ -26,7 +27,7 @@ const truncateString = (str, num) => {
   <div
     class="bg-transparent backdrop-blur text-[#fff] border border-[#fff] px-5 py-10 rounded-[20px] w-full md:w-[40%] lg:w-[30%] flex flex-col gap-4 items-center shadow-md text-center"
   >
-    <div class="flex flex-row gap-4 w-full justify-end">
+    <div v-if="activeTab !== 'api'" class="flex flex-row gap-4 w-full justify-end">
       <RouterLink :to="`/jobs`">
         <button
           title="Edit Job"
@@ -58,7 +59,9 @@ const truncateString = (str, num) => {
         <span><v-icon name="io-location-sharp"></v-icon></span>{{ location }}
       </p>
     </div>
-    <RouterLink :to="`/jobs/${index + 1}`">
+    <RouterLink
+      :to="`${activeTab === 'api' ? `/jobs/api/${index + 1}` : `/jobs/site/${index + 1}`}`"
+    >
       <button
         class="py-3 px-8 rounded-[4px] font-semibold bg-white border border-[#fff] text-[#127780]"
       >

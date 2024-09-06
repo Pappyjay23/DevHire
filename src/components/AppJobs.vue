@@ -11,6 +11,7 @@ onMounted(() => {
   if (jobsStore.jobs.length === 0) {
     jobsStore.fetchJobs()
   }
+  jobsStore.fetchSiteJobs()
 })
 
 defineProps({
@@ -18,8 +19,10 @@ defineProps({
 })
 
 const input = ref('')
+const activeTab = ref('api')
 const filteredJobs = computed(() => {
-  return jobsStore.jobs?.filter((job) => {
+  const jobs = activeTab.value === 'api' ? jobsStore.jobs : jobsStore.siteJobs
+  return jobs?.filter((job) => {
     return job.jobTitle.toLowerCase().includes(input.value.toLowerCase())
   })
 })
@@ -43,6 +46,25 @@ const size = '20px'
         type="search"
         v-model="input"
       />
+
+      <!-- Tabs component -->
+      <div class="mb-5 text-xl relative">
+        <div class="tabs-container">
+          <button
+            @click="activeTab = 'api'"
+            :class="['tab-button', activeTab === 'api' ? 'active' : '']"
+          >
+            API Jobs
+          </button>
+          <button
+            @click="activeTab = 'site'"
+            :class="['tab-button', activeTab === 'site' ? 'active' : '']"
+          >
+            Site Jobs
+          </button>
+        </div>
+      </div>
+
       <div v-if="jobsStore.isLoading" class="mt-10">
         <PulseLoader :color="color" :size="size" />
       </div>
@@ -52,13 +74,18 @@ const size = '20px'
           :key="job"
           :index="index"
           :title="job.jobTitle"
-          :type="job.jobType.join(', ').charAt(0).toUpperCase() + job.jobType.join(', ').slice(1)"
+          :type="
+            activeTab === 'api'
+              ? job.jobType.join(', ').charAt(0).toUpperCase() + job.jobType.join(', ').slice(1)
+              : job.jobType
+          "
           :description="job.jobExcerpt"
           :location="job.jobGeo"
           :companyName="job.companyName"
           :jobApplyUrl="job.url"
           :jobListDate="job.pubDate"
           buttonTitle="Read More"
+          :activeTab="activeTab"
         />
       </div>
       <RouterLink to="/jobs" v-if="!jobsStore.isLoading">
@@ -76,5 +103,42 @@ const size = '20px'
 <style scoped>
 ::placeholder {
   color: white;
+}
+
+.tabs-container {
+  position: relative;
+  display: inline-flex;
+}
+
+.tab-button {
+  padding: 0.5rem 1rem;
+  color: white;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.tab-button.active {
+  font-weight: 600;
+}
+
+.tabs-container::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  height: 2px;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.tabs-container:has(.tab-button:first-child.active)::after {
+  left: 0;
+  width: 50%;
+}
+
+.tabs-container:has(.tab-button:last-child.active)::after {
+  left: 50%;
+  width: 50%;
 }
 </style>

@@ -1,9 +1,37 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
+const siteJobs = [
+  {
+    jobTitle: 'Backend Developer',
+    jobType: 'Part-Time',
+    jobExcerpt:
+      'Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
+    jobDescription:
+      'Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
+    jobGeo: 'Chicago, IL',
+    companyName: 'ServerSide Solutions',
+    url: 'https://www.linkedin.com/jobs/view/123456789',
+    pubDate: '2022-01-01'
+  },
+  {
+    jobTitle: 'Frontend Developer',
+    jobType: 'Part-Time',
+    jobExcerpt:
+      'Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
+    jobDescription:
+      'Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
+    jobGeo: 'Chicago, IL',
+    companyName: 'ServerSide Solutions',
+    url: 'https://www.linkedin.com/jobs/view/123456789',
+    pubDate: '2022-01-01'
+  }
+]
+
 export const useJobsStore = defineStore('jobs', {
   state: () => ({
     jobs: [],
+    siteJobs: [],
     isLoading: false,
     error: null
   }),
@@ -20,7 +48,6 @@ export const useJobsStore = defineStore('jobs', {
             industry: 'engineering'
           }
         })
-        console.log('Response data:', response.data.jobs)
 
         this.jobs = response.data.jobs
       } catch (error) {
@@ -33,6 +60,10 @@ export const useJobsStore = defineStore('jobs', {
       } finally {
         this.isLoading = false
       }
+    },
+
+    fetchSiteJobs() {
+      this.siteJobs = siteJobs
     }
 
     // async loadMoreJobs() {
