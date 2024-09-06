@@ -1,45 +1,44 @@
-// src/stores/jobs.ts
 import { defineStore } from 'pinia'
 import axios from 'axios'
-// import { franc } from 'franc'
 
 export const useJobsStore = defineStore('jobs', {
   state: () => ({
     jobs: [],
-    isLoading: true
+    isLoading: false,
+    error: null
   }),
   actions: {
     async fetchJobs() {
-      const options = {
-        method: 'GET',
-        url: 'https://linkedin-data-scraper.p.rapidapi.com/search_jobs',
-        params: {
-          query: 'Software developer',
-          page: '1',
-          sortBy: 'DD'
-        },
-        headers: {
-          'x-rapidapi-key': '6e83667247mshd69d9d7f98a5cd9p110252jsne2b73f83ca2b',
-          'x-rapidapi-host': 'linkedin-data-scraper.p.rapidapi.com'
-        }
-      }
+      this.isLoading = true
+      this.error = null
 
       try {
-        const response = await axios.request(options)
-        const allJobs = response.data.response.jobs
+        const response = await axios.get('https://jobicy.com/api/v2/remote-jobs', {
+          params: {
+            count: 20,
+            geo: 'usa',
+            industry: 'engineering'
+          }
+        })
+        console.log('Response data:', response.data.jobs)
 
-        // Filter out non-English job titles
-        // this.jobs = allJobs.filter((job) => {
-        //   const detectedLang = franc(job.title)
-        //   return detectedLang === 'eng' || detectedLang === 'und'
-        // })
-        this.jobs = allJobs
-
-        this.isLoading = false
+        this.jobs = response.data.jobs
       } catch (error) {
-        console.error(error)
-        // this.isLoading = false
+        console.error('Error fetching jobs:', error)
+        if (axios.isAxiosError(error)) {
+          this.error = error.response?.data?.error || error.message
+        } else {
+          this.error = 'An unexpected error occurred'
+        }
+      } finally {
+        this.isLoading = false
       }
     }
+
+    // async loadMoreJobs() {
+    //   if (this.currentPage * this.resultsPerPage < this.totalResults) {
+    //     await this.fetchJobs(query, this.currentPage + 1)
+    //   }
+    // }
   }
 })

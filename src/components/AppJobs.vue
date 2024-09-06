@@ -19,8 +19,8 @@ defineProps({
 
 const input = ref('')
 const filteredJobs = computed(() => {
-  return jobsStore.jobs.filter((job) => {
-    return job.title.toLowerCase().includes(input.value.toLowerCase())
+  return jobsStore.jobs?.filter((job) => {
+    return job.jobTitle.toLowerCase().includes(input.value.toLowerCase())
   })
 })
 
@@ -48,20 +48,16 @@ const size = '20px'
       </div>
       <div v-else class="flex gap-4 w-full justify-center flex-wrap">
         <JobsCard
-          v-for="(job, index) in filteredJobs.slice(0, limit || filteredJobs.length)"
+          v-for="(job, index) in filteredJobs?.slice(0, limit || filteredJobs.length)"
           :key="job"
           :index="index"
-          :title="job.title"
-          :type="job.formattedEmploymentStatus"
-          :workplace="job.workplaceTypes.join(', ')"
-          :description="job.jobDescription"
-          :location="job.formattedLocation"
-          :experienceLevel="job.formattedExperienceLevel"
-          :companyName="job.company_data.name"
-          :companyDescription="job.company_data.description"
-          :companyUrl="job.company_data.url"
-          :jobApplyUrl="job.jobPostingUrl"
-          :jobListDate="job.listedAt"
+          :title="job.jobTitle"
+          :type="job.jobType.join(', ').charAt(0).toUpperCase() + job.jobType.join(', ').slice(1)"
+          :description="job.jobExcerpt"
+          :location="job.jobGeo"
+          :companyName="job.companyName"
+          :jobApplyUrl="job.url"
+          :jobListDate="job.pubDate"
           buttonTitle="Read More"
         />
       </div>

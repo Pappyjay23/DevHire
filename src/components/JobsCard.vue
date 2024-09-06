@@ -1,14 +1,10 @@
 <script setup>
-import MarkdownIt from 'markdown-it'
-
 defineProps({
   index: Number,
   title: String,
   type: String,
-  workplace: String,
   description: String,
   location: String,
-  experienceLevel: String,
   companyName: String,
   companyDescription: String,
   companyUrl: String,
@@ -24,10 +20,6 @@ const truncateString = (str, num) => {
     return str
   }
 }
-
-const markdown = new MarkdownIt({
-  breaks: true // Convert single newline characters to <br> tags
-})
 </script>
 
 <template>
@@ -53,16 +45,14 @@ const markdown = new MarkdownIt({
     <h2 class="text-xl font-semibold">
       {{ type }}
     </h2>
-    <h2 class="text-2xl font-bold min-h-[100px]">
-      {{ truncateString(title, 40) }}
-    </h2>
-    <h2 class="text-2xl font-bold">
-      {{ workplace }}
-    </h2>
+    <h2 class="text-2xl font-bold min-h-[100px]">{{ title }}</h2>
+
     <p
-      class="text-[90%] mb-2 leading-8 min-h-[100px]"
-      v-html="truncateString(markdown.render(description), 100)"
+      v-if="description"
+      class="text-[90%] mb-2 leading-8 min-h-[150px]"
+      v-html="`${truncateString(description, 150)}`"
     ></p>
+    <p v-else class="text-[90%] mb-2 leading-8 min-h-[120px]">No description available</p>
     <div class="flex flex-col gap-4">
       <p class="font-semibold">
         <span><v-icon name="io-location-sharp"></v-icon></span>{{ location }}
