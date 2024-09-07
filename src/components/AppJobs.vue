@@ -88,7 +88,7 @@ const size = '20px'
           :activeTab="activeTab"
         />
       </div>
-      <RouterLink to="/jobs" v-if="!jobsStore.isLoading">
+      <RouterLink to="/jobs" v-if="!jobsStore.isLoading && filteredJobs.length !== 0">
         <button
           v-if="limit"
           class="bg-[#fff] text-[#127780] py-3 px-8 rounded-[10px] font-semibold mt-5"
