@@ -1,56 +1,17 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import JobsCard from './JobsCard.vue'
-import { computed } from 'vue'
 import JobsBg from '@/assets/hero-bg.jpg'
-import axios from 'axios'
+import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
+import { useJobsStore } from '@/stores/jobs'
 
-const options = {
-  method: 'GET',
-  url: 'https://linkedin-data-scraper.p.rapidapi.com/search_jobs',
-  params: {
-    query: 'Software developer',
-    page: '1',
-    sortBy: 'DD'
-  },
-  headers: {
-    'x-rapidapi-key': '6e83667247mshd69d9d7f98a5cd9p110252jsne2b73f83ca2b',
-    'x-rapidapi-host': 'linkedin-data-scraper.p.rapidapi.com'
-  }
-}
-
-const jobs = ref([])
-
-// Function to fetch data from API and update localStorage
-const fetchData = async () => {
-  try {
-    const response = await axios.request(options)
-    const jobData = response.data.response.jobs
-    jobs.value = jobData
-
-    // Save the jobs data to localStorage
-    localStorage.setItem('jobs', JSON.stringify(jobData))
-
-    console.log(response.data)
-  } catch (error) {
-    console.error(error)
-  }
-}
-
-// Function to load jobs from localStorage or fetch from API
-const loadJobs = () => {
-  const storedJobs = JSON.parse(localStorage.getItem('jobs'))
-  if (storedJobs && storedJobs.length > 0) {
-    jobs.value = storedJobs
-  } else {
-    fetchData()
-  }
-}
-
-// Watch the route and update job based on index
+const jobsStore = useJobsStore()
 
 onMounted(() => {
-  loadJobs() // Load jobs from localStorage or fetch them if not present
+  if (jobsStore.jobs.length === 0) {
+    jobsStore.fetchJobs()
+  }
+  jobsStore.fetchSiteJobs()
 })
 
 defineProps({
@@ -58,15 +19,19 @@ defineProps({
 })
 
 const input = ref('')
+const activeTab = ref('api')
 const filteredJobs = computed(() => {
-  return jobs.value.filter((job) => {
-    return job.title.toLowerCase().includes(input.value.toLowerCase())
+  const jobs = activeTab.value === 'api' ? jobsStore.jobs : jobsStore.siteJobs
+  return jobs?.filter((job) => {
+    return job.jobTitle.toLowerCase().includes(input.value.toLowerCase())
   })
 })
+
+const color = '#fff'
+const size = '20px'
 </script>
 
 <template>
-  <!--  <section class="p-5 bg-[#127780] text-center"> -->
   <section
     class="p-5 text-center bg-fixed bg-cover bg-center relative z-10 min-h-screen h-full"
     :style="{ backgroundImage: `url(${limit && JobsBg})` }"
@@ -81,33 +46,56 @@ const filteredJobs = computed(() => {
         type="search"
         v-model="input"
       />
-      <div class="flex gap-4 w-full justify-center flex-wrap">
+
+      <!-- Tabs component -->
+      <div class="mb-5 text-xl relative">
+        <div class="tabs-container">
+          <button
+            @click="activeTab = 'api'"
+            :class="['tab-button', activeTab === 'api' ? 'active' : '']"
+          >
+            API Jobs
+          </button>
+          <button
+            @click="activeTab = 'site'"
+            :class="['tab-button', activeTab === 'site' ? 'active' : '']"
+          >
+            Site Jobs
+          </button>
+        </div>
+      </div>
+
+      <div v-if="jobsStore.isLoading" class="mt-10">
+        <PulseLoader :color="color" :size="size" />
+      </div>
+      <div v-else class="flex gap-4 w-full justify-center flex-wrap">
         <JobsCard
-          v-for="(job, index) in filteredJobs.slice(0, limit || filteredJobs.length)"
+          v-for="(job, index) in filteredJobs?.slice(0, limit || filteredJobs.length)"
           :key="job"
           :index="index"
-          :title="job.title"
-          :type="job.formattedEmploymentStatus"
-          :workplace="job.workplaceTypes.join(', ')"
-          :description="job.jobDescription"
-          :location="job.formattedLocation"
-          :experienceLevel="job.formattedExperienceLevel"
-          :companyName="job.company_data.name"
-          :companyDescription="job.company_data.description"
-          :companyUrl="job.company_data.url"
-          :jobApplyUrl="job.jobPostingUrl"
-          :jobListDate="job.listedAt"
+          :title="job.jobTitle"
+          :type="
+            activeTab === 'api'
+              ? job.jobType.join(', ').charAt(0).toUpperCase() + job.jobType.join(', ').slice(1)
+              : job.jobType
+          "
+          :description="job.jobExcerpt"
+          :location="job.jobGeo"
+          :companyName="job.companyName"
+          :jobApplyUrl="job.url"
+          :jobListDate="job.pubDate"
           buttonTitle="Read More"
+          :activeTab="activeTab"
         />
       </div>
-      <RouterLink to="/jobs">
+      <RouterLink to="/jobs" v-if="!jobsStore.isLoading && filteredJobs.length !== 0">
         <button
           v-if="limit"
           class="bg-[#fff] text-[#127780] py-3 px-8 rounded-[10px] font-semibold mt-5"
         >
           View All
-        </button></RouterLink
-      >
+        </button>
+      </RouterLink>
     </div>
   </section>
 </template>
@@ -115,5 +103,42 @@ const filteredJobs = computed(() => {
 <style scoped>
 ::placeholder {
   color: white;
+}
+
+.tabs-container {
+  position: relative;
+  display: inline-flex;
+}
+
+.tab-button {
+  padding: 0.5rem 1rem;
+  color: white;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.tab-button.active {
+  font-weight: 600;
+}
+
+.tabs-container::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  height: 2px;
+  background: white;
+  transition: all 0.3s ease;
+}
+
+.tabs-container:has(.tab-button:first-child.active)::after {
+  left: 0;
+  width: 50%;
+}
+
+.tabs-container:has(.tab-button:last-child.active)::after {
+  left: 50%;
+  width: 50%;
 }
 </style>

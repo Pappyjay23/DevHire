@@ -10,3 +10,21 @@
   font-weight: 400;
   scroll-behavior: smooth;
 }
+
+::-webkit-scrollbar {
+	width: 6px;
+	height: 8px;
+}
+
+::-webkit-scrollbar-track {
+	background: #031516;
+}
+
+::-webkit-scrollbar-thumb {
+	background: #fff;
+	border-radius: 100vh;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: #dfdfdf;
+}

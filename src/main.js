@@ -1,6 +1,7 @@
 import './assets/main.css'
 
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import { OhVueIcon, addIcons } from 'oh-vue-icons'
@@ -11,10 +12,13 @@ import {
   IoLocationSharp,
   MdWarningRound,
   BiArrowLeftShort,
-  BiArrowUpRight
+  BiArrowUpRight,
+  FaEdit,
+  BiTrashFill
 } from 'oh-vue-icons/icons'
 
 const app = createApp(App)
+const pinia = createPinia()
 
 addIcons(
   MdCloseTwotone,
@@ -23,10 +27,13 @@ addIcons(
   IoLocationSharp,
   MdWarningRound,
   BiArrowLeftShort,
-  BiArrowUpRight
+  BiArrowUpRight,
+  FaEdit,
+  BiTrashFill
 )
 
 app.use(router)
+app.use(pinia)
 
 app.component('v-icon', OhVueIcon)
 
