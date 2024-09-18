@@ -1,4 +1,6 @@
 <script setup>
+import { useAuthStore } from '@/stores/auth'
+
 defineProps({
   title: String,
   description: String,
@@ -6,6 +8,8 @@ defineProps({
   isDeveloper: Boolean,
   link: String
 })
+
+const authStore = useAuthStore()
 </script>
 
 <template>
@@ -17,7 +21,7 @@ defineProps({
       {{ title }}
     </h2>
     <p class="text-[90%] min-h-[50px]">{{ description }}</p>
-    <RouterLink :to="link">
+    <RouterLink :to="authStore.isLoggedIn ? link : '/login'">
       <button
         :class="isDeveloper ? 'bg-[#127780] text-[#fff]' : 'bg-[#fff] text-[#127780]'"
         class="py-3 px-8 rounded-[4px] font-semibold"

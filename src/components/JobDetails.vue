@@ -61,37 +61,39 @@ const size = '20px'
     </div>
     <div class="lg:w-[80%] mx-auto flex flex-col items-start gap-4">
       <h2 class="text-4xl font-bold text-center">
-        {{ job.jobTitle }}
+        {{ job.title }}
       </h2>
       <div>
         <h2 class="text-[15px] font-bold tracking-wide">Company Name:</h2>
         <h2 class="text-2xl font-bold tracking-wide">
-          {{ job.companyName.charAt(0).toUpperCase() + job.companyName.slice(1) }}
+          {{ job.company }}
         </h2>
       </div>
-      <h2 v-if="isApi" class="text-xl font-semibold">
-        {{ job.jobType?.join(', ').charAt(0).toUpperCase() + job.jobType.join(', ').slice(1) }}
+      <h2 class="text-xl font-semibold">
+        {{ job.employmentType }}
       </h2>
-      <h2 v-else class="text-xl font-semibold">
-        {{ job.jobType }}
-      </h2>
+
       <div class="flex flex-col gap-4">
         <p class="font-semibold flex items-center gap-2">
-          <v-icon scale="1.2" name="io-location-sharp"></v-icon>{{ job.jobGeo }}
+          <v-icon scale="1.2" name="io-location-sharp"></v-icon>{{ job.location }}
         </p>
       </div>
       <div class="flex flex-col gap-4 mb-5">
         <p class="font-semibold flex items-center gap-3">
-          <span class="font-semibold">Date Posted:</span> {{ job.pubDate.split(' ')[0] }}
+          <span class="font-semibold">Date Posted:</span> {{ job.datePosted }}
         </p>
 
         <p class="text-[1.1rem] font-semibold mt-2">Job Description:</p>
         <div class="h-[300px] overflow-auto lg:pr-3">
-          <p class="text-[80%] mb-2 leading-8" v-html="`${job.jobDescription}`"></p>
+          <p class="text-[80%] mb-2 leading-8" v-html="`${job.description}`"></p>
         </div>
       </div>
       <div class="w-full flex justify-center">
-        <a class="font-bold" target="'_blank" :href="`${job.url}`">
+        <a
+          class="font-bold"
+          target="'_blank"
+          :href="`${isApi ? job.jobProviders[0].url : job.url}`"
+        >
           <button
             class="py-3 px-6 rounded-[4px] font-semibold bg-white border border-[#fff] text-[#127780] text-[90%]"
           >
