@@ -67,9 +67,24 @@ const size = '20px'
         </div>
       </div>
 
+      <div
+        v-if="activeTab === 'api' && jobsStore.jobs.length === 0 && !jobsStore.isLoading"
+        class="mt-10"
+      >
+        <span class="text-white text-[1.5rem] font-semibold">No jobs available here.</span>
+      </div>
+
+      <div
+        v-if="activeTab === 'site' && jobsStore.siteJobs.length === 0 && !jobsStore.isLoading"
+        class="mt-10"
+      >
+        <span class="text-white text-[1.5rem] font-semibold">No jobs available here.</span>
+      </div>
+
       <div v-if="jobsStore.isLoading" class="mt-10">
         <PulseLoader :color="color" :size="size" />
       </div>
+
       <div v-else class="flex gap-4 w-full justify-center flex-wrap">
         <JobsCard
           v-for="(job, index) in filteredJobs?.slice(0, limit || filteredJobs.length)"
@@ -101,6 +116,7 @@ const size = '20px'
           View All
         </button>
       </RouterLink>
+      //
     </div>
   </section>
 </template>
