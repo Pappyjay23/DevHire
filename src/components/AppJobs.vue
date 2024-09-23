@@ -1,11 +1,13 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { useJobsStore } from '@/stores/jobs'
+import { computed, onMounted, ref } from 'vue'
 import JobsCard from './JobsCard.vue'
 import JobsBg from '@/assets/hero-bg.jpg'
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
-import { useJobsStore } from '@/stores/jobs'
 
 const jobsStore = useJobsStore()
+const authStore = useAuthStore()
 
 onMounted(() => {
   if (jobsStore.jobs.length === 0) {
@@ -88,9 +90,12 @@ const size = '20px'
           :activeTab="activeTab"
         />
       </div>
-      <RouterLink to="/jobs" v-if="!jobsStore.isLoading && filteredJobs.length !== 0">
+      <RouterLink
+        :to="`${authStore.isLoggedIn ? '/jobs' : '/login'}`"
+        v-if="!jobsStore.isLoading && filteredJobs.length !== 0"
+      >
         <button
-          v-if="limit"
+          v-if="limit && jobsStore.jobs.length !== 0"
           class="bg-[#fff] text-[#127780] py-3 px-8 rounded-[10px] font-semibold mt-5"
         >
           View All

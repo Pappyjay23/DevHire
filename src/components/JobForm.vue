@@ -119,7 +119,7 @@ const formFieldStyles = 'border-b border-[#fff] p-2 outline-none text-[90%]'
           />
         </div>
         <button
-          class="py-3 px-8 rounded-[50px] w-[80%] md:w-[50%] lg:[40%] mx-auto font-semibold bg-[#fff] text-[#127780]"
+          class="py-3 px-8 rounded-[50px] w-[80%] md:w-[50%] lg:w-[4w0%] mx-auto font-semibold bg-[#fff] text-[#127780]"
         >
           Post Job
         </button>
@@ -132,8 +132,15 @@ const formFieldStyles = 'border-b border-[#fff] p-2 outline-none text-[90%]'
 select,
 select option,
 textarea,
-input {
+input,
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
   background: transparent !important;
+  -webkit-text-fill-color: white !important;
+  caret-color: white !important;
+  transition: background-color 5000s ease-in-out 0s;
 }
 
 ::placeholder {

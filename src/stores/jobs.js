@@ -45,7 +45,8 @@ export const useJobsStore = defineStore('jobs', {
           params: {
             count: 20,
             geo: 'usa',
-            industry: 'engineering'
+            industry: 'dev'
+            // industry: 'engineering'
           }
         })
 

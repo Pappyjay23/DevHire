@@ -30,6 +30,21 @@ const router = createRouter({
       component: () => import('../views/PostJobView.vue')
     },
     {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('../views/DashboardView.vue')
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue')
+    },
+    {
+      path: '/sign-up',
+      name: 'sign-up',
+      component: () => import('../views/SignUpView.vue')
+    },
+    {
       path: '/:catchAll(.*)',
       name: 'not-found',
       component: () => import('../views/NotFoundView.vue')
