@@ -3,34 +3,28 @@ import axios from 'axios'
 
 const siteJobs = [
   {
-    title: 'Backend Developer',
-    employmentType: 'Part-Time',
-    description:
+    jobTitle: 'Backend Developer',
+    jobType: 'Part-Time',
+    jobExcerpt:
+      'Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
+    jobDescription:
       'Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
-    location: 'Chicago, IL',
-    company: 'ServerSide Solutions',
+    jobGeo: 'Chicago, IL',
+    companyName: 'ServerSide Solutions',
     url: 'https://www.linkedin.com/jobs/view/123456789',
-    datePosted: '2022-01-01'
+    pubDate: '2022-01-01'
   },
   {
-    title: 'Frontend Developer',
-    employmentType: 'Part-Time',
-    description:
-      'Looking for a Frontend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
-    location: 'Chicago, IL',
-    company: 'ServerSide Solutions',
+    jobTitle: 'Frontend Developer',
+    jobType: 'Part-Time',
+    jobExcerpt:
+      'Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
+    jobDescription:
+      'Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
+    jobGeo: 'Chicago, IL',
+    companyName: 'ServerSide Solutions',
     url: 'https://www.linkedin.com/jobs/view/123456789',
-    datePosted: '2022-01-01'
-  },
-  {
-    title: 'Full-Stack Developer',
-    employmentType: 'Part-Time',
-    description:
-      'Looking for a Full-Stack Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
-    location: 'Chicago, IL',
-    company: 'ServerSide Solutions',
-    url: 'https://www.linkedin.com/jobs/view/123456789',
-    datePosted: '2022-01-01'
+    pubDate: '2022-01-01'
   }
 ]
 
@@ -46,37 +40,15 @@ export const useJobsStore = defineStore('jobs', {
       this.isLoading = true
       this.error = null
 
-      // try {
-      //   const response = await axios.get('https://jobicy.com/api/v2/remote-jobs', {
-      //     params: {
-      //       count: 20,
-      //       geo: 'usa',
-      //       industry: 'engineering'
-      //     }
-      //   })
-
-      const options = {
-        method: 'GET',
-        url: 'https://jobs-api14.p.rapidapi.com/list',
-        params: {
-          query: 'Web Developer',
-          location: 'United States',
-          distance: '1.0',
-          language: 'en_GB',
-          remoteOnly: 'false',
-          datePosted: 'month',
-          employmentTypes: 'fulltime;parttime;intern;contractor',
-          index: '0'
-        },
-        headers: {
-          'x-rapidapi-key': '6e83667247mshd69d9d7f98a5cd9p110252jsne2b73f83ca2b',
-          'x-rapidapi-host': 'jobs-api14.p.rapidapi.com'
-        }
-      }
-
       try {
-        const response = await axios.request(options)
-        console.log(response.data)
+        const response = await axios.get('https://jobicy.com/api/v2/remote-jobs', {
+          params: {
+            count: 20,
+            geo: 'usa',
+            industry: 'dev'
+            // industry: 'engineering'
+          }
+        })
 
         this.jobs = response.data.jobs
       } catch (error) {

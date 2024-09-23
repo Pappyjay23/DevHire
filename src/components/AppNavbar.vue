@@ -38,11 +38,11 @@ const navItems = computed(() => {
 
 const allMobileNavItems = [
   { title: 'Home', link: '/', showAlways: true },
+  { title: 'Dashboard', link: '/dashboard', requiresAuth: true },
   { title: 'Jobs', link: '/jobs', requiresAuth: true },
   { title: 'Post Job', link: '/post-job', requiresAuth: true },
   { title: 'Login', link: '/login', requiresAuth: false },
   { title: 'Sign up', link: '/sign-up', requiresAuth: false },
-  { title: 'Dashboard', link: '/dashboard', requiresAuth: true },
   { title: 'Logout', link: '', requiresAuth: true, clickFunction: handleLogout }
 ]
 

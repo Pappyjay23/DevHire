@@ -11,6 +11,7 @@ const route = useRoute()
 const router = useRouter()
 
 const job = ref()
+const jobDetails = ref({})
 
 const isApi = computed(() => route.path.includes('/jobs/api/'))
 
@@ -32,6 +33,16 @@ onMounted(async () => {
   if (!job.value) {
     console.log('Job not found, redirecting...')
     router.push('/jobs')
+  }
+
+  jobDetails.value = {
+    title: job.value?.jobTitle,
+    type: job.value?.jobType,
+    description: job.value?.jobDescription,
+    location: job.value?.jobGeo,
+    companyName: job.value?.companyName,
+    jobApplyUrl: job.value?.url,
+    jobListDate: job.value?.pubDate
   }
 })
 
@@ -60,40 +71,41 @@ const size = '20px'
       ></RouterLink>
     </div>
     <div class="lg:w-[80%] mx-auto flex flex-col items-start gap-4">
-      <h2 class="text-4xl font-bold text-center">
-        {{ job.title }}
+      <h2 class="text-[1.5rem] md:text-[1.8rem] font-bold text-left tracking-[-1px]">
+        {{ jobDetails.title }}
       </h2>
       <div>
-        <h2 class="text-[15px] font-bold tracking-wide">Company Name:</h2>
-        <h2 class="text-2xl font-bold tracking-wide">
-          {{ job.company }}
+        <h2 class="text-[12px] font-semibold tracking-wide">Company Name:</h2>
+        <h2 class="text-xl font-bold tracking-normal">
+          {{ jobDetails.companyName.charAt(0).toUpperCase() + jobDetails.companyName?.slice(1) }}
         </h2>
       </div>
-      <h2 class="text-xl font-semibold">
-        {{ job.employmentType }}
+      <h2 v-if="isApi" class="text-[1rem] font-semibold">
+        {{
+          jobDetails.type.join(', ').charAt(0).toUpperCase() + jobDetails.type.join(', ').slice(1)
+        }}
+      </h2>
+      <h2 v-else class="text-[1rem] font-semibold">
+        {{ jobDetails.jobType }}
       </h2>
 
       <div class="flex flex-col gap-4">
         <p class="font-semibold flex items-center gap-2">
-          <v-icon scale="1.2" name="io-location-sharp"></v-icon>{{ job.location }}
+          <v-icon scale="1.2" name="io-location-sharp"></v-icon>{{ jobDetails.location }}
         </p>
       </div>
       <div class="flex flex-col gap-4 mb-5">
         <p class="font-semibold flex items-center gap-3">
-          <span class="font-semibold">Date Posted:</span> {{ job.datePosted }}
+          <span class="font-semibold">Date Posted:</span> {{ jobDetails.jobListDate.split(' ')[0] }}
         </p>
 
         <p class="text-[1.1rem] font-semibold mt-2">Job Description:</p>
         <div class="h-[300px] overflow-auto lg:pr-3">
-          <p class="text-[80%] mb-2 leading-8" v-html="`${job.description}`"></p>
+          <p class="text-[80%] mb-2 leading-8" v-html="`${jobDetails.description}`"></p>
         </div>
       </div>
       <div class="w-full flex justify-center">
-        <a
-          class="font-bold"
-          target="'_blank"
-          :href="`${isApi ? job.jobProviders[0].url : job.url}`"
-        >
+        <a class="font-bold" target="'_blank" :href="`${jobDetails.jobApplyUrl}`">
           <button
             class="py-3 px-6 rounded-[4px] font-semibold bg-white border border-[#fff] text-[#127780] text-[90%]"
           >

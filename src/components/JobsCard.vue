@@ -63,7 +63,7 @@ const getRoute = (activeTab, index) => {
     <h2 class="text-xl font-semibold">
       {{ type }}
     </h2>
-    <h2 class="text-2xl font-bold min-h-[50px]">{{ title }}</h2>
+    <h2 class="text-2xl font-bold min-h-[80px]">{{ title }}</h2>
 
     <p
       v-if="description"

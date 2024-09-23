@@ -1,10 +1,10 @@
 <script setup>
-import { onMounted, ref, computed } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { useJobsStore } from '@/stores/jobs'
+import { computed, onMounted, ref } from 'vue'
 import JobsCard from './JobsCard.vue'
 import JobsBg from '@/assets/hero-bg.jpg'
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
-import { useJobsStore } from '@/stores/jobs'
-import { useAuthStore } from '@/stores/auth'
 
 const jobsStore = useJobsStore()
 const authStore = useAuthStore()
@@ -25,7 +25,7 @@ const activeTab = ref('api')
 const filteredJobs = computed(() => {
   const jobs = activeTab.value === 'api' ? jobsStore.jobs : jobsStore.siteJobs
   return jobs?.filter((job) => {
-    return job.title.toLowerCase().includes(input.value.toLowerCase())
+    return job.jobTitle.toLowerCase().includes(input.value.toLowerCase())
   })
 })
 
@@ -75,13 +75,17 @@ const size = '20px'
           v-for="(job, index) in filteredJobs?.slice(0, limit || filteredJobs.length)"
           :key="job"
           :index="index"
-          :title="job.title"
-          :type="job.employmentType"
-          :description="job.description"
-          :location="job.location"
-          :companyName="job.company"
-          :jobApplyUrl="activeTab === 'api' ? job.jobProviders[0].url : job.url"
-          :jobListDate="job.datePosted"
+          :title="job.jobTitle"
+          :type="
+            activeTab === 'api'
+              ? job.jobType.join(', ').charAt(0).toUpperCase() + job.jobType.join(', ').slice(1)
+              : job.jobType
+          "
+          :description="job.jobExcerpt"
+          :location="job.jobGeo"
+          :companyName="job.companyName"
+          :jobApplyUrl="job.url"
+          :jobListDate="job.pubDate"
           buttonTitle="Read More"
           :activeTab="activeTab"
         />
@@ -91,7 +95,7 @@ const size = '20px'
         v-if="!jobsStore.isLoading && filteredJobs.length !== 0"
       >
         <button
-          v-if="limit"
+          v-if="limit && jobsStore.jobs.length !== 0"
           class="bg-[#fff] text-[#127780] py-3 px-8 rounded-[10px] font-semibold mt-5"
         >
           View All
