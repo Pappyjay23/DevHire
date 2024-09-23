@@ -100,7 +100,7 @@ const size = '20px'
         </p>
 
         <p class="text-[1.1rem] font-semibold mt-2">Job Description:</p>
-        <div class="h-[300px] overflow-auto lg:pr-3">
+        <div :class="`${isApi ? 'h-[300px]' : 'h-[170px]'} overflow-auto lg:pr-3`">
           <p class="text-[80%] mb-2 leading-8" v-html="`${jobDetails.description}`"></p>
         </div>
       </div>

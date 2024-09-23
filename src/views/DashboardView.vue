@@ -1,5 +1,69 @@
 <script setup>
-import HeroBg from '@/assets/job-bg-2.jpg'
+import HeroBg from '@/assets/job-bg.jpg'
+import DashboardCard from '@/components/DashboardCard.vue'
+
+const dummyJobs = [
+  {
+    jobTitle: 'Backend Developer',
+    jobType: 'Part-Time',
+    jobDescription:
+      'Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
+    jobGeo: 'Chicago, IL',
+    companyName: 'ServerSide Solutions',
+    url: 'https://www.linkedin.com/jobs/view/123456789',
+    pubDate: '2022-01-01'
+  },
+  {
+    jobTitle: 'Frontend Developer',
+    jobType: 'Part-Time',
+    jobDescription:
+      'Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
+    jobGeo: 'Chicago, IL',
+    companyName: 'ServerSide Solutions',
+    url: 'https://www.linkedin.com/jobs/view/123456789',
+    pubDate: '2022-01-01'
+  },
+  {
+    jobTitle: 'Frontend Developer',
+    jobType: 'Part-Time',
+    jobDescription:
+      'Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
+    jobGeo: 'Chicago, IL',
+    companyName: 'ServerSide Solutions',
+    url: 'https://www.linkedin.com/jobs/view/123456789',
+    pubDate: '2022-01-01'
+  },
+  {
+    jobTitle: 'Frontend Developer',
+    jobType: 'Part-Time',
+    jobDescription:
+      'Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
+    jobGeo: 'Chicago, IL',
+    companyName: 'ServerSide Solutions',
+    url: 'https://www.linkedin.com/jobs/view/123456789',
+    pubDate: '2022-01-01'
+  },
+  {
+    jobTitle: 'Frontend Developer',
+    jobType: 'Part-Time',
+    jobDescription:
+      'Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
+    jobGeo: 'Chicago, IL',
+    companyName: 'ServerSide Solutions',
+    url: 'https://www.linkedin.com/jobs/view/123456789',
+    pubDate: '2022-01-01'
+  },
+  {
+    jobTitle: 'Frontend Developer',
+    jobType: 'Part-Time',
+    jobDescription:
+      'Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
+    jobGeo: 'Chicago, IL',
+    companyName: 'ServerSide Solutions',
+    url: 'https://www.linkedin.com/jobs/view/123456789',
+    pubDate: '2022-01-01'
+  }
+]
 </script>
 
 <template>
@@ -9,6 +73,42 @@ import HeroBg from '@/assets/job-bg-2.jpg'
   >
     <div class="bg-[#000] absolute top-0 left-0 w-full min-h-screen h-full opacity-50 -z-20"></div>
     <h1 class="mb-5 text-3xl text-white font-bold text-center">Dashboard</h1>
+    <div
+      class="bg-transparent backdrop-blur text-[#fff] border border-[#fff] px-5 py-10 rounded-[20px] w-full md:w-[95%] lg:w-[70%] mx-auto shadow-md mt-5 min-h-[50vh]"
+    >
+      <div class="flex flex-col mb-[2rem]">
+        <span class="text-2xl font-bold text-center mb-[1.5rem]">Profile Information</span>
+        <div class="flex flex-col gap-2 w-full lg:w-[70%] mx-auto">
+          <span class="font-bold">Username: Pappyjay</span>
+          <span class="font-bold">Email: peace@test.com</span>
+          <span class="font-bold">Role: Employer</span>
+        </div>
+      </div>
+      <div class="flex flex-col">
+        <span class="text-2xl font-bold text-center mb-[1.5rem]">Created Jobs</span>
+        <div v-if="dummyJobs?.length > 0" class="flex gap-4 flex-wrap w-full justify-center">
+          <DashboardCard
+            v-for="(job, index) in dummyJobs?.slice(0, dummyJobs.length)"
+            :key="job"
+            :index="index"
+            :title="job.jobTitle"
+            :type="job.jobType"
+            :description="job.jobDescription"
+            :location="job.jobGeo"
+            :companyName="job.companyName"
+            :jobApplyUrl="job.url"
+            :jobListDate="job.pubDate"
+            :activeTab="activeTab"
+          />
+        </div>
+        <div v-else class="flex flex-col gap-4 items-center w-full justify-center">
+          <span class="text-[1.2rem] font-semibold">No jobs created yet. </span>
+          <div class="text-[90%]">
+            Create one <RouterLink :to="`/post-job`" class="font-bold">here</RouterLink>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
