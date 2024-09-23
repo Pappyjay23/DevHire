@@ -5,8 +5,6 @@ const siteJobs = [
   {
     jobTitle: 'Backend Developer',
     jobType: 'Part-Time',
-    jobExcerpt:
-      'Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
     jobDescription:
       'Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
     jobGeo: 'Chicago, IL',
@@ -17,8 +15,6 @@ const siteJobs = [
   {
     jobTitle: 'Frontend Developer',
     jobType: 'Part-Time',
-    jobExcerpt:
-      'Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
     jobDescription:
       'Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
     jobGeo: 'Chicago, IL',

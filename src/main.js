@@ -19,6 +19,8 @@ import {
   BiEyeFill,
   BiEyeSlashFill
 } from 'oh-vue-icons/icons'
+import Toast from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -41,6 +43,7 @@ addIcons(
 
 app.use(router)
 app.use(pinia)
+app.use(Toast)
 
 app.component('v-icon', OhVueIcon)
 

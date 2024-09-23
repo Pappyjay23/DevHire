@@ -81,7 +81,7 @@ const size = '20px'
               ? job.jobType.join(', ').charAt(0).toUpperCase() + job.jobType.join(', ').slice(1)
               : job.jobType
           "
-          :description="job.jobExcerpt"
+          :description="activeTab === 'api' ? job.jobExcerpt : job.jobDescription"
           :location="job.jobGeo"
           :companyName="job.companyName"
           :jobApplyUrl="job.url"
