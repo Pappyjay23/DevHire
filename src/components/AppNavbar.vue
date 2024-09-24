@@ -101,7 +101,7 @@ const handleMouseLeave = () => {
           @mouseover="handleMouseOver"
           @mouseleave="handleMouseLeave"
         >
-          Pa
+          {{ authStore.userName.slice(0, 2) }}
         </li>
       </ul>
       <ul

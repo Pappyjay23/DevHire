@@ -1,6 +1,7 @@
 <script setup>
 import HeroBg from '@/assets/job-bg.jpg'
 import DashboardCard from '@/components/DashboardCard.vue'
+import { useAuthStore } from '@/stores/auth'
 
 const dummyJobs = [
   {
@@ -64,6 +65,8 @@ const dummyJobs = [
     pubDate: '2022-01-01'
   }
 ]
+
+const authStore = useAuthStore()
 </script>
 
 <template>
@@ -77,23 +80,22 @@ const dummyJobs = [
       class="bg-transparent backdrop-blur text-[#fff] border border-[#fff] px-5 py-10 rounded-[20px] w-full md:w-[95%] lg:w-[70%] mx-auto shadow-md mt-5 min-h-[50vh]"
     >
       <div class="flex flex-col items-center mb-[2rem]">
-        <div
-          class="flex flex-col md:flex-row items-center justify-center w-full gap-2 lg:w-[70%] mx-auto"
-        >
+        <div class="flex flex-col items-center justify-center w-full gap-2 lg:w-[70%] mx-auto">
           <div
-            class="cursor-pointer py-2 px-4 rounded-[8px] text-[#fff] bg-transparent border border-white transition-all duration-300 font-bold text-[3rem] w-fit h-fit"
+            class="cursor-pointer py-2 px-4 rounded-[8px] text-[#fff] bg-transparent border border-white transition-all duration-300 font-bold text-[2.5rem] md:text-[3rem] w-fit h-fit"
           >
-            Pa
+            {{ authStore.userName.slice(0, 2) }}
           </div>
-          <div class="flex flex-col gap-2 text-[#fff] px-4 py-2 text-[1.1rem] tracking-[-0.5px]">
-            <span class="font-semibold">Username: Pappyjay</span>
-            <span class="font-semibold">Email: peace@test.com</span>
-            <span class="font-semibold">Role: Employer</span>
+          <div
+            class="flex flex-col gap-2 text-[#fff] px-4 py-2 text-[1.1rem] tracking-[-0.5px] text-center"
+          >
+            <span class="text-[1.5rem] md:text-[2rem] font-semibold">{{ authStore.userName }}</span>
+            <span class="font-semibold md:text-[1.3rem]">{{ authStore.userRole }}</span>
+            <span class="font-semibold text-[90%] md:text-base"> {{ authStore.userEmail }}</span>
           </div>
         </div>
       </div>
       <div class="flex flex-col">
-        <span class="text-2xl font-bold text-center mb-[1.5rem]">Created Jobs</span>
         <div v-if="dummyJobs?.length > 0" class="flex gap-4 flex-wrap w-full justify-center">
           <DashboardCard
             v-for="(job, index) in dummyJobs?.slice(0, dummyJobs.length)"
@@ -110,10 +112,11 @@ const dummyJobs = [
           />
         </div>
         <div v-else class="flex flex-col gap-4 items-center w-full justify-center">
-          <span class="text-[1.2rem] font-semibold">No jobs created yet. </span>
-          <div class="text-[90%]">
-            Create one <RouterLink :to="`/post-job`" class="font-bold">here</RouterLink>
-          </div>
+          <span class="text-[1.2rem] text-center"
+            >No jobs created yet. Create one
+            <RouterLink :to="`/post-job`" class="font-bold">here</RouterLink>
+          </span>
+          <div class="text-[90%]"></div>
         </div>
       </div>
     </div>
