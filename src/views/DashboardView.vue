@@ -76,12 +76,20 @@ const dummyJobs = [
     <div
       class="bg-transparent backdrop-blur text-[#fff] border border-[#fff] px-5 py-10 rounded-[20px] w-full md:w-[95%] lg:w-[70%] mx-auto shadow-md mt-5 min-h-[50vh]"
     >
-      <div class="flex flex-col mb-[2rem]">
-        <span class="text-2xl font-bold text-center mb-[1.5rem]">Profile Information</span>
-        <div class="flex flex-col gap-2 w-full lg:w-[70%] mx-auto">
-          <span class="font-bold">Username: Pappyjay</span>
-          <span class="font-bold">Email: peace@test.com</span>
-          <span class="font-bold">Role: Employer</span>
+      <div class="flex flex-col items-center mb-[2rem]">
+        <div
+          class="flex flex-col md:flex-row items-center justify-center w-full gap-2 lg:w-[70%] mx-auto"
+        >
+          <div
+            class="cursor-pointer py-2 px-4 rounded-[8px] text-[#fff] bg-transparent border border-white transition-all duration-300 font-bold text-[3rem] w-fit h-fit"
+          >
+            Pa
+          </div>
+          <div class="flex flex-col gap-2 text-[#fff] px-4 py-2 text-[1.1rem] tracking-[-0.5px]">
+            <span class="font-semibold">Username: Pappyjay</span>
+            <span class="font-semibold">Email: peace@test.com</span>
+            <span class="font-semibold">Role: Employer</span>
+          </div>
         </div>
       </div>
       <div class="flex flex-col">
