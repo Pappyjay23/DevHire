@@ -1,33 +1,13 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-
-const siteJobs = [
-  {
-    jobTitle: 'Backend Developer',
-    jobType: 'Part-Time',
-    jobDescription:
-      'Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Backend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
-    jobGeo: 'Chicago, IL',
-    companyName: 'ServerSide Solutions',
-    url: 'https://www.linkedin.com/jobs/view/123456789',
-    pubDate: '2022-01-01'
-  },
-  {
-    jobTitle: 'Frontend Developer',
-    jobType: 'Part-Time',
-    jobDescription:
-      'Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.Looking for a Frotnend Developer to maintain and improve our server-side applications. Experience with Node.js, Express, and MongoDB is preferred.',
-    jobGeo: 'Chicago, IL',
-    companyName: 'ServerSide Solutions',
-    url: 'https://www.linkedin.com/jobs/view/123456789',
-    pubDate: '2022-01-01'
-  }
-]
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
+import { auth, db } from '@/firebase'
 
 export const useJobsStore = defineStore('jobs', {
   state: () => ({
     jobs: [],
     siteJobs: [],
+    userJobs: [],
     isLoading: false,
     error: null
   }),
@@ -59,14 +39,42 @@ export const useJobsStore = defineStore('jobs', {
       }
     },
 
-    fetchSiteJobs() {
-      this.siteJobs = siteJobs
-    }
+    // Fetch jobs from Firestore
+    fetchSiteJobs: async function () {
+      try {
+        // Reference to the 'siteJobs' collection
+        const siteJobsCollectionRef = collection(db, 'siteJobs')
 
-    // async loadMoreJobs() {
-    //   if (this.currentPage * this.resultsPerPage < this.totalResults) {
-    //     await this.fetchJobs(query, this.currentPage + 1)
-    //   }
-    // }
+        // Fetch all documents from the 'siteJobs' collection
+        const siteJobsSnapshot = await getDocs(siteJobsCollectionRef)
+
+        // Map over the documents and store the data
+        this.siteJobs = siteJobsSnapshot.docs.map((doc) => ({
+          ...doc.data() // Spread the job data
+        }))
+      } catch (error) {
+        console.error('Error fetching site jobs:', error)
+      }
+    },
+
+    fetchUserJobs: async function () {
+      try {
+        // Reference to the current user's document in 'users' collection
+        const userDocRef = doc(db, 'users', auth.currentUser.email)
+
+        // Fetch the user's document
+        const userDocSnapshot = await getDoc(userDocRef)
+
+        if (userDocSnapshot.exists()) {
+          // Extract the 'jobs' array from the user document
+          const userData = userDocSnapshot.data()
+          this.userJobs = userData.jobs || [] // If no jobs, default to an empty array
+        } else {
+          console.log('User document does not exist')
+        }
+      } catch (error) {
+        console.error('Error fetching user jobs:', error)
+      }
+    }
   }
 })

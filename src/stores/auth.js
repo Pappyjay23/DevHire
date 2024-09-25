@@ -4,26 +4,6 @@ import { auth, db } from '@/firebase'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { useToast } from 'vue-toastification'
 
-const getFriendlyErrorMessage = (errorMessage) => {
-  if (errorMessage.includes('auth/invalid-email')) {
-    return 'The email address is not valid.'
-  } else if (errorMessage.includes('auth/user-disabled')) {
-    return 'This account has been disabled.'
-  } else if (errorMessage.includes('auth/user-not-found')) {
-    return 'No user found with this email address.'
-  } else if (errorMessage.includes('auth/wrong-password')) {
-    return 'Incorrect password. Please try again.'
-  } else if (errorMessage.includes('auth/email-already-in-use')) {
-    return 'This email is already registered. Try logging in instead.'
-  } else if (errorMessage.includes('auth/operation-not-allowed')) {
-    return 'This operation is not allowed. Please try again.'
-  } else if (errorMessage.includes('auth/weak-password')) {
-    return 'The password is too weak. Please choose a stronger password.'
-  } else {
-    return 'An unknown error occurred. Please try again.'
-  }
-}
-
 export const useAuthStore = defineStore('auth', {
   state: () => ({
     user: null,
@@ -51,9 +31,10 @@ export const useAuthStore = defineStore('auth', {
         toast.success('Login successful!')
         router.push('/')
       } catch (error) {
-        const friendlyMessage = getFriendlyErrorMessage(error.message)
         console.error('Login error:', error.message)
-        toast.error(`Error: ${friendlyMessage}`)
+        toast.error(
+          `${error.message.includes('auth') ? 'Error: ' + error.message.split(' ')[2] : 'An unknown error occurred. Please try again.'}`
+        )
       }
     },
 
@@ -89,9 +70,10 @@ export const useAuthStore = defineStore('auth', {
         toast.success('Sign up successful!')
         router.push('/')
       } catch (error) {
-        const friendlyMessage = getFriendlyErrorMessage(error.message)
         console.error('Sign up error:', error.message)
-        toast.error(`Error: ${friendlyMessage}`)
+        toast.error(
+          `${error.message.includes('auth') ? 'Error: ' + error.message.split(' ')[2] : 'An unknown error occurred. Please try again.'}`
+        )
       }
     },
     logout() {

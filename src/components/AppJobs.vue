@@ -96,11 +96,13 @@ const size = '20px'
               ? job.jobType.join(', ').charAt(0).toUpperCase() + job.jobType.join(', ').slice(1)
               : job.jobType
           "
-          :description="activeTab === 'api' ? job.jobExcerpt : job.jobDescription"
-          :location="job.jobGeo"
+          :description="activeTab === 'api' ? job.jobExcerpt : job.description"
+          :location="activeTab === 'api' ? job.jobGeo : job.location"
           :companyName="job.companyName"
-          :jobApplyUrl="job.url"
-          :jobListDate="job.pubDate"
+          :jobApplyUrl="activeTab === 'api' ? job.url : job.applicationLink"
+          :jobListDate="activeTab === 'api' ? job.pubDate : job.dateCreated"
+          :jobOwner="job.createdBy"
+          :jobId="job.jobId"
           buttonTitle="Read More"
           :activeTab="activeTab"
         />
@@ -116,7 +118,6 @@ const size = '20px'
           View All
         </button>
       </RouterLink>
-      //
     </div>
   </section>
 </template>

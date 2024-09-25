@@ -3,6 +3,9 @@ import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import { useToast } from 'vue-toastification'
 import { useRouter } from 'vue-router'
+import { auth, db } from '@/firebase'
+import { arrayUnion, doc, setDoc, updateDoc } from 'firebase/firestore'
+import { v4 as uuidv4 } from 'uuid'
 
 const toast = useToast()
 const router = useRouter()
@@ -35,15 +38,43 @@ const { value: applicationLink } = useField('applicationLink')
 const { value: location } = useField('location')
 const { value: companyName } = useField('companyName')
 
-const onSubmit = handleSubmit((values) => {
-  console.log(values)
-  // Here you would typically send the form data to your backend
-  // Simulating an API call with a setTimeout
-  setTimeout(() => {
+const onSubmit = handleSubmit(async (formValues) => {
+  console.log('Form values: ', formValues)
+  try {
+    const userDocRef = doc(db, 'users', auth.currentUser.email)
+
+    // Generate a unique job ID using UUID
+    const jobId = uuidv4()
+    const jobDocRef = doc(db, 'siteJobs', formValues.jobTitle + '-' + jobId)
+
+    // Create job object
+    const jobData = {
+      jobId,
+      jobType: formValues.jobType,
+      jobTitle: formValues.jobTitle,
+      description: formValues.description,
+      applicationLink: formValues.applicationLink,
+      location: formValues.location,
+      companyName: formValues.companyName,
+      dateCreated: new Date().toDateString(),
+      createdBy: auth.currentUser.email // Save the email of the user who created the job
+    }
+
+    // Update the user's document by adding the job to the 'jobs' array
+    await updateDoc(userDocRef, {
+      jobs: arrayUnion(jobData) // Add the job to the 'jobs' array in the user's document
+    })
+
+    // Save the job with the unique document ID in 'siteJobs'
+    await setDoc(jobDocRef, jobData)
+
     toast.success('Job listing created successfully!')
     resetForm()
     router.push('/dashboard')
-  }, 1000)
+  } catch (error) {
+    console.error('Error creating job:', error.message)
+    toast.error('Failed to create job listing. Please try again.')
+  }
 })
 
 const updateJobType = (event) => {

@@ -13,7 +13,9 @@ defineProps({
   jobApplyUrl: String,
   jobListDate: String,
   buttonTitle: String,
-  activeTab: String
+  activeTab: String,
+  jobOwner: String,
+  jobId: String
 })
 
 const truncateString = (str, num) => {
@@ -44,21 +46,26 @@ const getRoute = (activeTab, index) => {
   <div
     class="bg-transparent backdrop-blur text-[#fff] border border-[#fff] px-5 py-10 rounded-[20px] w-full md:w-[40%] lg:w-[30%] flex flex-col gap-4 items-center shadow-md text-center"
   >
-    <div v-if="activeTab !== 'api'" class="flex flex-row gap-4 w-full justify-end">
-      <RouterLink v-if="authStore.isLoggedIn" :to="`/jobs`">
+    <div
+      v-if="activeTab !== 'api' && authStore.isLoggedIn && jobOwner === authStore.userEmail"
+      class="flex flex-row gap-4 w-full justify-end"
+    >
+      <RouterLink :to="`/edit-job/${jobId}`">
         <button
           title="Edit Job"
           class="p-[6px] rounded-[4px] font-semibold bg-white border border-[#fff] text-[#127780] flex justify-center items-center gap-1"
         >
-          <v-icon name="fa-edit" scale="1.2"></v-icon></button
-      ></RouterLink>
-      <RouterLink v-if="authStore.isLoggedIn" :to="`/jobs`">
+          <v-icon name="fa-edit" scale="1.2"></v-icon>
+        </button>
+      </RouterLink>
+      <RouterLink :to="`/delete-job/${jobId}`">
         <button
           title="Delete Job"
           class="p-[6px] rounded-[4px] font-semibold bg-white border border-[#fff] text-red-600 flex justify-center items-center gap-1"
         >
-          <v-icon name="bi-trash-fill" scale="1.2"></v-icon></button
-      ></RouterLink>
+          <v-icon name="bi-trash-fill" scale="1.2"></v-icon>
+        </button>
+      </RouterLink>
     </div>
     <h2 class="text-xl font-semibold">
       {{ type }}
