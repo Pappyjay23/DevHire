@@ -65,7 +65,7 @@ const getRoute = (activeTab, index) => {
       v-if="activeTab !== 'api' && authStore.isLoggedIn && jobOwner === authStore.userEmail"
       class="flex flex-row gap-4 w-full justify-end"
     >
-      <RouterLink :to="`/edit-job/${jobId}`">
+      <RouterLink :to="`/edit-job/${title}/${jobId}`">
         <button
           title="Edit Job"
           class="p-[6px] rounded-[4px] font-semibold bg-white border border-[#fff] text-[#127780] flex justify-center items-center gap-1"

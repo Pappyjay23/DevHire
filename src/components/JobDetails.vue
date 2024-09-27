@@ -80,7 +80,7 @@ const size = '20px'
       v-if="authStore.isLoggedIn && jobDetails.jobOwner === authStore.userEmail"
       class="flex flex-row gap-4 w-full justify-end mb-8 lg:mb-4"
     >
-      <RouterLink :to="`/edit-job/${jobDetails.jobId}`">
+      <RouterLink :to="`/edit-job/${jobDetails.title}/${jobDetails.jobId}`">
         <button
           class="p-[6px] rounded-[4px] bg-white border border-[#fff] text-[#127780] flex justify-center items-center gap-1"
         >

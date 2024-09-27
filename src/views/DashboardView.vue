@@ -1,24 +1,15 @@
 <script setup>
 import HeroBg from '@/assets/job-bg.jpg'
 import DashboardCard from '@/components/DashboardCard.vue'
-import { auth } from '@/firebase'
 import { useAuthStore } from '@/stores/auth'
 import { useJobsStore } from '@/stores/jobs'
-import { onAuthStateChanged } from 'firebase/auth'
 import { onMounted } from 'vue'
 
 const authStore = useAuthStore()
 const jobsStore = useJobsStore()
 
 onMounted(() => {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      console.log('User is signed in:', user.email)
-      jobsStore.fetchUserJobs() // Fetch the user's jobs if they are signed in
-    } else {
-      console.log('No user is signed in')
-    }
-  })
+  jobsStore.fetchUserJobs()
 })
 </script>
 

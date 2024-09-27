@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import { collection, deleteDoc, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore'
 import { auth, db } from '@/firebase'
+import { onAuthStateChanged } from 'firebase/auth'
 
 export const useJobsStore = defineStore('jobs', {
   state: () => ({
@@ -56,25 +57,40 @@ export const useJobsStore = defineStore('jobs', {
         console.error('Error fetching site jobs:', error)
       }
     },
+    fetchUserJobs() {
+      return new Promise((resolve, reject) => {
+        const unsubscribe = onAuthStateChanged(auth, async (user) => {
+          unsubscribe() // Unsubscribe immediately after getting the auth state
 
-    fetchUserJobs: async function () {
-      try {
-        // Reference to the current user's document in 'users' collection
-        const userDocRef = doc(db, 'users', auth.currentUser.email)
+          if (user) {
+            try {
+              // Reference to the current user's document in 'users' collection
+              const userDocRef = doc(db, 'users', user.email)
 
-        // Fetch the user's document
-        const userDocSnapshot = await getDoc(userDocRef)
+              // Fetch the user's document
+              const userDocSnapshot = await getDoc(userDocRef)
 
-        if (userDocSnapshot.exists()) {
-          // Extract the 'jobs' array from the user document
-          const userData = userDocSnapshot.data()
-          this.userJobs = userData.jobs || [] // If no jobs, default to an empty array
-        } else {
-          console.log('User document does not exist')
-        }
-      } catch (error) {
-        console.error('Error fetching user jobs:', error)
-      }
+              if (userDocSnapshot.exists()) {
+                // Extract the 'jobs' array from the user document
+                const userData = userDocSnapshot.data()
+                this.userJobs = userData.jobs || [] // If no jobs, default to an empty array
+                resolve(this.userJobs)
+              } else {
+                console.log('User document does not exist')
+                this.userJobs = []
+                resolve(this.userJobs)
+              }
+            } catch (error) {
+              console.error('Error fetching user jobs:', error)
+              reject(error)
+            }
+          } else {
+            console.log('No user is signed in')
+            this.userJobs = []
+            resolve(this.userJobs)
+          }
+        })
+      })
     },
     async deleteJob(jobId, jobTitle) {
       try {
