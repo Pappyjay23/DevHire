@@ -26,7 +26,7 @@ const isLoading = ref(false)
 const handleDelete = async () => {
   isLoading.value = true
   await jobsStore.deleteJob(props.jobId, props.title)
-  showConfirmationDialog.value = false // Close the dialog after deletion
+  showConfirmationDialog.value = false
 }
 </script>
 

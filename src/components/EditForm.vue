@@ -14,7 +14,6 @@ const router = useRouter()
 
 const formFieldStyles = 'border-b border-[#fff] p-2 outline-none text-[90%]'
 
-// Validation schema for the form
 const schema = yup.object({
   jobType: yup.string().required('Job type is required'),
   jobTitle: yup
@@ -30,7 +29,6 @@ const schema = yup.object({
   companyName: yup.string().required('Company name is required')
 })
 
-// Form setup
 const { handleSubmit, errors, resetForm, setValues } = useForm({
   validationSchema: schema
 })
@@ -79,7 +77,7 @@ const color = '#127780'
 const size = '25px'
 
 const onSubmit = handleSubmit(async (formValues) => {
-  isLoading.value = true // Show loader while job is being created
+  isLoading.value = true
   try {
     const userDocRef = doc(db, 'users', auth.currentUser.email)
     const userDoc = await getDoc(userDocRef)

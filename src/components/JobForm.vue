@@ -45,16 +45,14 @@ const color = '#127780'
 const size = '25px'
 
 const onSubmit = handleSubmit(async (formValues) => {
-  isLoading.value = true // Show loader while job is being created
+  isLoading.value = true
 
   try {
     const userDocRef = doc(db, 'users', auth.currentUser.email)
 
-    // Generate a unique job ID using UUID
     const jobId = uuidv4()
     const jobDocRef = doc(db, 'siteJobs', formValues.jobTitle + '-' + jobId)
 
-    // Create job object
     const jobData = {
       jobId,
       jobType: formValues.jobType,

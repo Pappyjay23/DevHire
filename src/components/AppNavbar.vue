@@ -32,9 +32,7 @@ const navItems = computed(() => {
     if (!authStore.isLoggedIn) {
       return item.showAlways || item.requiresAuth === false
     } else {
-      // For logged-in users, check their role
       if (authStore.userRole === 'Developer') {
-        // Developer can see only 'Home', 'Jobs', and 'Logout'
         return ['Home', 'Jobs'].includes(item.title)
       } else if (authStore.userRole === 'Employer') {
         return item.title !== 'Login' && item.title !== 'Sign up'
@@ -58,9 +56,7 @@ const mobileNavItems = computed(() => {
     if (!authStore.isLoggedIn) {
       return item.showAlways || item.requiresAuth === false
     } else {
-      // For logged-in users, check their role
       if (authStore.userRole === 'Developer') {
-        // Developer can see only 'Home', 'Jobs', and 'Logout'
         return ['Home', 'Jobs', 'Logout'].includes(item.title)
       } else if (authStore.userRole === 'Employer') {
         return item.title !== 'Login' && item.title !== 'Sign up'
