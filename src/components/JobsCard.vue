@@ -18,7 +18,8 @@ const props = defineProps({
   buttonTitle: String,
   activeTab: String,
   jobOwner: String,
-  jobId: String
+  jobId: String,
+  showPlaceHolder: Boolean
 })
 
 const truncateString = (str, num) => {
@@ -84,6 +85,7 @@ const getRoute = (activeTab, index) => {
         <v-icon name="bi-trash-fill" scale="1.2"></v-icon>
       </button>
     </div>
+    <div v-show="showPlaceHolder && jobOwner !== authStore.userEmail" class="min-h-[36px]"></div>
     <h2 class="text-xl font-semibold">
       {{ type }}
     </h2>

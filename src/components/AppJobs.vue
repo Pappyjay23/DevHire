@@ -31,6 +31,13 @@ const filteredJobs = computed(() => {
 
 const color = '#fff'
 const size = '20px'
+
+const showPlaceHolder = computed(() => {
+  return (
+    activeTab.value === 'site' &&
+    filteredJobs.value.some((job) => job.createdBy === authStore.userEmail)
+  )
+})
 </script>
 
 <template>
@@ -105,6 +112,7 @@ const size = '20px'
           :jobId="job.jobId"
           buttonTitle="Read More"
           :activeTab="activeTab"
+          :showPlaceHolder="showPlaceHolder"
         />
       </div>
       <RouterLink
