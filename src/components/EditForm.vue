@@ -105,7 +105,7 @@ const onSubmit = handleSubmit(async (formValues) => {
       applicationLink: formValues.applicationLink,
       location: formValues.location,
       companyName: formValues.companyName,
-      dateUpdated: new Date().toDateString(), // Store the last updated date
+      dateCreated: new Date().toDateString(), // Store the last updated date
       createdBy: auth.currentUser.email // Save the email of the user who updated the job
     }
 
@@ -119,24 +119,31 @@ const onSubmit = handleSubmit(async (formValues) => {
       jobs: arrayUnion(jobData) // Add the updated job to the user's jobs
     })
 
-    // Reference the old job document
-    const oldJobDocRef = doc(db, 'siteJobs', jobTitleFromParams + '-' + jobId)
+    // Check if the job title has changed before updating the 'siteJobs' collection
+    if (formValues.jobTitle !== jobTitleFromParams) {
+      // Reference the old job document
+      const oldJobDocRef = doc(db, 'siteJobs', jobTitleFromParams + '-' + jobId)
 
-    // Create a new job document with the updated jobTitle in the document ID
-    const newJobDocRef = doc(db, 'siteJobs', formValues.jobTitle + '-' + jobId)
+      // Create a new job document with the updated jobTitle in the document ID
+      const newJobDocRef = doc(db, 'siteJobs', formValues.jobTitle + '-' + jobId)
 
-    // Get the old job document data
-    const oldJobDoc = await getDoc(oldJobDocRef)
+      // Get the old job document data
+      const oldJobDoc = await getDoc(oldJobDocRef)
 
-    if (!oldJobDoc.exists()) {
-      throw new Error('Old job document does not exist')
+      if (!oldJobDoc.exists()) {
+        throw new Error('Old job document does not exist')
+      }
+
+      // Set the new job document with the updated data
+      await setDoc(newJobDocRef, jobData)
+
+      // Delete the old job document
+      await deleteDoc(oldJobDocRef)
+    } else {
+      // If the title hasn't changed, just update the existing document
+      const jobDocRef = doc(db, 'siteJobs', jobTitleFromParams + '-' + jobId)
+      await updateDoc(jobDocRef, jobData)
     }
-
-    // Set the new job document with the updated data
-    await setDoc(newJobDocRef, jobData)
-
-    // Delete the old job document
-    await deleteDoc(oldJobDocRef)
 
     toast.success('Job listing updated successfully!')
     resetForm()
