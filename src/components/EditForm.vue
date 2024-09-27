@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import { useToast } from 'vue-toastification'
@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router'
 import { auth, db } from '@/firebase'
 import { arrayUnion, deleteDoc, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
 import { useJobsStore } from '@/stores/jobs'
+import PulseLoader from 'vue-spinner/src/ClipLoader.vue'
 
 const toast = useToast()
 const router = useRouter()
@@ -73,9 +74,12 @@ onMounted(async () => {
 })
 
 const jobsStore = useJobsStore()
+const isLoading = ref(false)
+const color = '#127780'
+const size = '25px'
 
 const onSubmit = handleSubmit(async (formValues) => {
-  console.log('Edited Form values: ', formValues)
+  isLoading.value = true // Show loader while job is being created
   try {
     const userDocRef = doc(db, 'users', auth.currentUser.email)
     const userDoc = await getDoc(userDocRef)
@@ -256,9 +260,10 @@ const updateJobType = (event) => {
         </div>
         <button
           type="submit"
-          class="py-3 px-8 rounded-[50px] w-[80%] md:w-[50%] lg:w-[40%] mx-auto font-semibold bg-[#fff] text-[#127780] cursor-pointer"
+          class="py-3 px-8 rounded-[50px] w-[80%] md:w-[50%] lg:w-[40%] mx-auto bg-[#fff] text-[#127780] cursor-pointer flex justify-center"
         >
-          Update Job
+          <PulseLoader v-if="isLoading" :color="color" :size="size" />
+          <span class="font-semibold" v-else> Update Job </span>
         </button>
       </form>
     </div>

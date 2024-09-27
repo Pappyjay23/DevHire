@@ -32,8 +32,10 @@ const truncateString = (str, num) => {
 const authStore = useAuthStore()
 const jobsStore = useJobsStore()
 const showConfirmationDialog = ref(false)
+const isLoading = ref(false)
 
 const handleDelete = async () => {
+  isLoading.value = true
   await jobsStore.deleteJob(props.jobId, props.title)
   showConfirmationDialog.value = false // Close the dialog after deletion
 }
@@ -54,6 +56,7 @@ const getRoute = (activeTab, index) => {
 
 <template>
   <ConfirmationDialog
+    :isLoading="isLoading"
     :isVisible="showConfirmationDialog"
     @cancel="showConfirmationDialog = false"
     @confirm="handleDelete"
@@ -84,7 +87,7 @@ const getRoute = (activeTab, index) => {
     <h2 class="text-xl font-semibold">
       {{ type }}
     </h2>
-    <h2 class="text-2xl font-bold min-h-[80px]">{{ title }}</h2>
+    <h2 class="text-2xl font-bold min-h-[80px] tracking-[-0.5px]">{{ title }}</h2>
 
     <p
       v-if="description"

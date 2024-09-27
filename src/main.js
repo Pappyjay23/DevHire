@@ -41,9 +41,14 @@ addIcons(
   BiEyeSlashFill
 )
 
+const options = {
+  timeout: 1500
+}
+
+app.use(Toast, options)
+
 app.use(router)
 app.use(pinia)
-app.use(Toast)
 
 app.component('v-icon', OhVueIcon)
 

@@ -55,8 +55,10 @@ onMounted(async () => {
 })
 
 const showConfirmationDialog = ref(false)
+const isLoading = ref(false)
 
 const handleDelete = async () => {
+  isLoading.value = true
   await jobsStore.deleteJob(jobDetails.value.jobId, jobDetails.value.title)
   showConfirmationDialog.value = false
   router.push('/jobs')
@@ -68,6 +70,7 @@ const size = '20px'
 
 <template>
   <ConfirmationDialog
+    :isLoading="isLoading"
     :isVisible="showConfirmationDialog"
     @cancel="showConfirmationDialog = false"
     @confirm="handleDelete"

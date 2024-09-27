@@ -6,6 +6,8 @@ import { useRouter } from 'vue-router'
 import { auth, db } from '@/firebase'
 import { arrayUnion, doc, setDoc, updateDoc } from 'firebase/firestore'
 import { v4 as uuidv4 } from 'uuid'
+import { ref } from 'vue'
+import PulseLoader from 'vue-spinner/src/ClipLoader.vue'
 
 const toast = useToast()
 const router = useRouter()
@@ -38,8 +40,13 @@ const { value: applicationLink } = useField('applicationLink')
 const { value: location } = useField('location')
 const { value: companyName } = useField('companyName')
 
+const isLoading = ref(false)
+const color = '#127780'
+const size = '25px'
+
 const onSubmit = handleSubmit(async (formValues) => {
-  console.log('Form values: ', formValues)
+  isLoading.value = true // Show loader while job is being created
+
   try {
     const userDocRef = doc(db, 'users', auth.currentUser.email)
 
@@ -177,9 +184,10 @@ const updateJobType = (event) => {
         </div>
         <button
           type="submit"
-          class="py-3 px-8 rounded-[50px] w-[80%] md:w-[50%] lg:w-[40%] mx-auto font-semibold bg-[#fff] text-[#127780] cursor-pointer"
+          class="py-3 px-8 rounded-[50px] w-[80%] md:w-[50%] lg:w-[40%] mx-auto bg-[#fff] text-[#127780] cursor-pointer flex justify-center"
         >
-          Post Job
+          <PulseLoader v-if="isLoading" :color="color" :size="size" />
+          <span class="font-semibold" v-else> Post Job </span>
         </button>
       </form>
     </div>

@@ -1,8 +1,13 @@
 <script setup>
 import { defineProps, defineEmits } from 'vue'
+import PulseLoader from 'vue-spinner/src/ClipLoader.vue'
 
 defineProps({
   isVisible: {
+    type: Boolean,
+    required: true
+  },
+  isLoading: {
     type: Boolean,
     required: true
   }
@@ -17,6 +22,9 @@ const confirm = () => {
 const cancel = () => {
   emit('cancel')
 }
+
+const color = '#fff'
+const size = '25px'
 </script>
 
 <template>
@@ -24,8 +32,12 @@ const cancel = () => {
     <div class="dialog flex flex-col items-center">
       <p>Are you sure you want to delete this job?</p>
       <div class="flex gap-3 mt-4">
-        <button class="bg-[#127780] text-white px-4 py-2 rounded-[4px]" @click="confirm">
-          Confirm
+        <button
+          class="bg-[#127780] text-white px-4 py-2 rounded-[4px] min-w-[85px]"
+          @click="confirm"
+        >
+          <PulseLoader v-if="isLoading" :color="color" :size="size" />
+          <span v-else> Confirm </span>
         </button>
         <button class="bg-red-600 text-white px-4 py-2 rounded-[4px]" @click="cancel">
           Cancel

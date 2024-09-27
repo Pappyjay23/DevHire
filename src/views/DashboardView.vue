@@ -26,7 +26,7 @@ onMounted(() => {
       <div class="flex flex-col items-center mb-[2rem]">
         <div class="flex flex-col items-center justify-center w-full gap-2 lg:w-[70%] mx-auto">
           <div
-            class="backdrop-blur cursor-pointer py-2 px-4 rounded-[8px] text-[#fff] bg-transparent border border-white transition-all duration-300 font-bold text-[2.5rem] md:text-[3rem] w-fit h-fit"
+            class="backdrop-blur cursor-pointer py-2 px-4 rounded-[8px] text-[#fff] bg-transparent border border-white transition-all duration-300 font-bold text-[2.5rem] md:text-[3rem] w-fit h-fit tracking-[-0.5px]"
           >
             {{ authStore.userName.slice(0, 2) }}
           </div>

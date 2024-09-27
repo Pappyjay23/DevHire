@@ -3,6 +3,7 @@ import { useAuthStore } from '@/stores/auth'
 import { ref } from 'vue'
 import { RouterLink, useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
+import PulseLoader from 'vue-spinner/src/ClipLoader.vue'
 
 const formFieldStyles = 'border-b border-[#fff] p-2 outline-none text-[90%]'
 
@@ -27,14 +28,20 @@ const authStore = useAuthStore()
 const toast = useToast()
 const router = useRouter()
 
+const isLoading = ref(false)
+const color = '#127780'
+const size = '25px'
+
 const handleLogin = async () => {
   if (!formValues.value.email || !formValues.value.password) {
     toast.error('Please provide email and password!')
     return
   }
+  isLoading.value = true
 
   try {
     await authStore.login(formValues.value.email, formValues.value.password, router)
+    isLoading.value = false
   } catch (error) {
     toast.error(`Login failed: ${error.message}`)
   }
@@ -50,6 +57,7 @@ const handleSignUp = async () => {
     toast.error('Please fill out all fields!')
     return
   }
+  isLoading.value = true
 
   try {
     await authStore.signUp(
@@ -59,6 +67,7 @@ const handleSignUp = async () => {
       formValues.value.role,
       router
     )
+    // isLoading.value = false
   } catch (error) {
     toast.error(`Sign up failed: ${error.message}`)
   }
@@ -136,9 +145,12 @@ const handleSignUp = async () => {
         </select>
 
         <button
-          class="py-3 px-8 rounded-[50px] w-[80%] md:w-[50%] mx-auto font-semibold bg-[#fff] text-[#127780] mt-5"
+          class="py-3 px-8 rounded-[50px] w-[80%] md:w-[50%] mx-auto font-semibold bg-[#fff] text-[#127780] mt-5 cursor-pointer flex justify-center"
         >
-          {{ authType === 'login' ? 'Login' : 'Sign up' }}
+          <PulseLoader v-if="isLoading" :color="color" :size="size" />
+          <span class="font-semibold" v-else>
+            {{ authType === 'login' ? 'Login' : 'Sign up' }}
+          </span>
         </button>
       </form>
       <div class="mt-5 text-[70%] lg:text-[80%] text-center">

@@ -116,7 +116,6 @@ export const useJobsStore = defineStore('jobs', {
           // Update the user's document with the new jobs array
           await updateDoc(userDocRef, { jobs: updatedJobs })
 
-          console.log('Job deleted successfully from both siteJobs and user document')
           this.fetchUserJobs()
           this.fetchSiteJobs()
         } else {

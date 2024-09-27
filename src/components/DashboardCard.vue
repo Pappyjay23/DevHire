@@ -21,8 +21,10 @@ const authStore = useAuthStore()
 
 const jobsStore = useJobsStore()
 const showConfirmationDialog = ref(false)
+const isLoading = ref(false)
 
 const handleDelete = async () => {
+  isLoading.value = true
   await jobsStore.deleteJob(props.jobId, props.title)
   showConfirmationDialog.value = false // Close the dialog after deletion
 }
@@ -30,6 +32,7 @@ const handleDelete = async () => {
 
 <template>
   <ConfirmationDialog
+    :isLoading="isLoading"
     :isVisible="showConfirmationDialog"
     @cancel="showConfirmationDialog = false"
     @confirm="handleDelete"
@@ -61,7 +64,7 @@ const handleDelete = async () => {
     <h2 class="text-xl font-semibold">
       {{ type }}
     </h2>
-    <h2 class="text-2xl font-bold min-h-[80px]">{{ title }}</h2>
+    <h2 class="text-2xl font-bold min-h-[80px] tracking-[-0.5px]">{{ title }}</h2>
 
     <div v-if="description" class="h-[150px] overflow-auto lg:pr-3">
       <p class="text-[80%] mb-2 leading-8 min-h-[150px]" v-html="`${description}`"></p>
