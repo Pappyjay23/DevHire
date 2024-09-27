@@ -11,7 +11,7 @@ const showNavbar = computed(() => {
 </script>
 
 <template>
-  <div class="min-h-screen">
+  <div class="min-h-screen bg-[#0d5258]">
     <AppNavbar v-if="showNavbar" />
     <div :class="{ 'pt-[63px] lg:pt-[72px]': showNavbar }" class="relative z-[10]">
       <RouterView />

@@ -30,6 +30,11 @@ const router = createRouter({
       component: () => import('../views/PostJobView.vue')
     },
     {
+      path: '/edit-job/:title/:id',
+      name: 'edit-job',
+      component: () => import('../views/EditJobView.vue')
+    },
+    {
       path: '/dashboard',
       name: 'dashboard',
       component: () => import('../views/DashboardView.vue')

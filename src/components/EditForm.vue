@@ -1,12 +1,12 @@
 <script setup>
+import { onMounted, ref } from 'vue'
 import { useForm, useField } from 'vee-validate'
 import * as yup from 'yup'
 import { useToast } from 'vue-toastification'
 import { useRouter } from 'vue-router'
 import { auth, db } from '@/firebase'
-import { arrayUnion, doc, setDoc, updateDoc } from 'firebase/firestore'
-import { v4 as uuidv4 } from 'uuid'
-import { ref } from 'vue'
+import { arrayUnion, deleteDoc, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
+import { useJobsStore } from '@/stores/jobs'
 import PulseLoader from 'vue-spinner/src/ClipLoader.vue'
 
 const toast = useToast()
@@ -14,6 +14,7 @@ const router = useRouter()
 
 const formFieldStyles = 'border-b border-[#fff] p-2 outline-none text-[90%]'
 
+// Validation schema for the form
 const schema = yup.object({
   jobType: yup.string().required('Job type is required'),
   jobTitle: yup
@@ -29,7 +30,8 @@ const schema = yup.object({
   companyName: yup.string().required('Company name is required')
 })
 
-const { handleSubmit, errors, resetForm } = useForm({
+// Form setup
+const { handleSubmit, errors, resetForm, setValues } = useForm({
   validationSchema: schema
 })
 
@@ -40,47 +42,121 @@ const { value: applicationLink } = useField('applicationLink')
 const { value: location } = useField('location')
 const { value: companyName } = useField('companyName')
 
+// Get the job ID from the route
+const jobId = router.currentRoute.value.params.id
+const jobTitleFromParams = router.currentRoute.value.params.title
+
+// Fetch job data when the component mounts
+onMounted(async () => {
+  try {
+    const jobDocRef = doc(db, 'siteJobs', jobTitleFromParams + '-' + jobId)
+    const jobSnap = await getDoc(jobDocRef)
+
+    if (jobSnap.exists()) {
+      const jobData = jobSnap.data()
+      // Pre-fill the form with the job data
+      setValues({
+        jobType: jobData.jobType,
+        jobTitle: jobData.jobTitle,
+        description: jobData.description,
+        applicationLink: jobData.applicationLink,
+        location: jobData.location,
+        companyName: jobData.companyName
+      })
+    } else {
+      toast.error('Job not found')
+      router.push('/dashboard')
+    }
+  } catch (error) {
+    console.error('Error fetching job data:', error.message)
+    toast.error('Failed to fetch job data. Please try again.')
+  }
+})
+
+const jobsStore = useJobsStore()
 const isLoading = ref(false)
 const color = '#127780'
 const size = '25px'
 
 const onSubmit = handleSubmit(async (formValues) => {
   isLoading.value = true // Show loader while job is being created
-
   try {
     const userDocRef = doc(db, 'users', auth.currentUser.email)
+    const userDoc = await getDoc(userDocRef)
 
-    // Generate a unique job ID using UUID
-    const jobId = uuidv4()
-    const jobDocRef = doc(db, 'siteJobs', formValues.jobTitle + '-' + jobId)
+    // Check if the user's document exists
+    if (!userDoc.exists()) {
+      throw new Error('User document does not exist')
+    }
 
-    // Create job object
+    const jobsArray = userDoc.data().jobs // Fetch current jobs
+
+    // Check if jobId is defined and exists in the jobs array
+    const jobToUpdate = jobsArray.find((job) => job.jobId === jobId)
+    if (!jobToUpdate) {
+      throw new Error('Job with the specified jobId does not exist in user jobs')
+    }
+
+    // Filter the jobs array to remove the job with the specified jobId
+    const updatedJobsArray = jobsArray.filter((job) => job.jobId !== jobId)
+
+    // Create job object with updated data
     const jobData = {
-      jobId,
+      jobId, // Include the existing jobId
       jobType: formValues.jobType,
       jobTitle: formValues.jobTitle,
       description: formValues.description,
       applicationLink: formValues.applicationLink,
       location: formValues.location,
       companyName: formValues.companyName,
-      dateCreated: new Date().toDateString(),
-      createdBy: auth.currentUser.email // Save the email of the user who created the job
+      dateCreated: new Date().toDateString(), // Store the last updated date
+      createdBy: auth.currentUser.email // Save the email of the user who updated the job
     }
 
-    // Update the user's document by adding the job to the 'jobs' array
+    // Update the user's document with the new jobs array
     await updateDoc(userDocRef, {
-      jobs: arrayUnion(jobData) // Add the job to the 'jobs' array in the user's document
+      jobs: updatedJobsArray // Set the new jobs array
     })
 
-    // Save the job with the unique document ID in 'siteJobs'
-    await setDoc(jobDocRef, jobData)
+    // Add the updated job to the 'jobs' array in the user's document
+    await updateDoc(userDocRef, {
+      jobs: arrayUnion(jobData) // Add the updated job to the user's jobs
+    })
 
-    toast.success('Job listing created successfully!')
+    // Check if the job title has changed before updating the 'siteJobs' collection
+    if (formValues.jobTitle !== jobTitleFromParams) {
+      // Reference the old job document
+      const oldJobDocRef = doc(db, 'siteJobs', jobTitleFromParams + '-' + jobId)
+
+      // Create a new job document with the updated jobTitle in the document ID
+      const newJobDocRef = doc(db, 'siteJobs', formValues.jobTitle + '-' + jobId)
+
+      // Get the old job document data
+      const oldJobDoc = await getDoc(oldJobDocRef)
+
+      if (!oldJobDoc.exists()) {
+        throw new Error('Old job document does not exist')
+      }
+
+      // Set the new job document with the updated data
+      await setDoc(newJobDocRef, jobData)
+
+      // Delete the old job document
+      await deleteDoc(oldJobDocRef)
+    } else {
+      // If the title hasn't changed, just update the existing document
+      const jobDocRef = doc(db, 'siteJobs', jobTitleFromParams + '-' + jobId)
+      await updateDoc(jobDocRef, jobData)
+    }
+
+    toast.success('Job listing updated successfully!')
     resetForm()
+    jobsStore.fetchUserJobs()
+    jobsStore.fetchSiteJobs()
     router.push('/dashboard')
   } catch (error) {
-    console.error('Error creating job:', error.message)
-    toast.error('Failed to create job listing. Please try again.')
+    console.error('Error updating job:', error.message)
+    toast.error('Failed to update job listing. Please try again.')
   }
 })
 
@@ -96,7 +172,7 @@ const updateJobType = (event) => {
   >
     <div class="text-[#fff] w-full">
       <h1 class="text-2xl lg:text-3xl text-white font-bold text-center mb-3 lg:mb-4">
-        Create Job Listing
+        Edit Job Listing
       </h1>
       <form @submit="onSubmit" class="flex flex-col gap-4">
         <div class="flex flex-col gap-2">
@@ -187,7 +263,7 @@ const updateJobType = (event) => {
           class="py-3 px-8 rounded-[50px] w-[80%] md:w-[50%] lg:w-[40%] mx-auto bg-[#fff] text-[#127780] cursor-pointer flex justify-center"
         >
           <PulseLoader v-if="isLoading" :color="color" :size="size" />
-          <span class="font-semibold" v-else> Post Job </span>
+          <span class="font-semibold" v-else> Update Job </span>
         </button>
       </form>
     </div>

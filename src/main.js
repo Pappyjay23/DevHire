@@ -19,6 +19,8 @@ import {
   BiEyeFill,
   BiEyeSlashFill
 } from 'oh-vue-icons/icons'
+import Toast from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -38,6 +40,12 @@ addIcons(
   BiEyeFill,
   BiEyeSlashFill
 )
+
+const options = {
+  timeout: 1500
+}
+
+app.use(Toast, options)
 
 app.use(router)
 app.use(pinia)

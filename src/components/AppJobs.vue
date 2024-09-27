@@ -31,6 +31,13 @@ const filteredJobs = computed(() => {
 
 const color = '#fff'
 const size = '20px'
+
+const showPlaceHolder = computed(() => {
+  return (
+    activeTab.value === 'site' &&
+    filteredJobs.value.some((job) => job.createdBy === authStore.userEmail)
+  )
+})
 </script>
 
 <template>
@@ -67,13 +74,28 @@ const size = '20px'
         </div>
       </div>
 
+      <div
+        v-if="activeTab === 'api' && jobsStore.jobs.length === 0 && !jobsStore.isLoading"
+        class="mt-10"
+      >
+        <span class="text-white text-[1.5rem] font-semibold">No jobs available here.</span>
+      </div>
+
+      <div
+        v-if="activeTab === 'site' && jobsStore.siteJobs.length === 0 && !jobsStore.isLoading"
+        class="mt-10"
+      >
+        <span class="text-white text-[1.5rem] font-semibold">No jobs available here.</span>
+      </div>
+
       <div v-if="jobsStore.isLoading" class="mt-10">
         <PulseLoader :color="color" :size="size" />
       </div>
+
       <div v-else class="flex gap-4 w-full justify-center flex-wrap">
         <JobsCard
           v-for="(job, index) in filteredJobs?.slice(0, limit || filteredJobs.length)"
-          :key="job"
+          :key="index"
           :index="index"
           :title="job.jobTitle"
           :type="
@@ -81,13 +103,16 @@ const size = '20px'
               ? job.jobType.join(', ').charAt(0).toUpperCase() + job.jobType.join(', ').slice(1)
               : job.jobType
           "
-          :description="job.jobExcerpt"
-          :location="job.jobGeo"
+          :description="activeTab === 'api' ? job.jobExcerpt : job.description"
+          :location="activeTab === 'api' ? job.jobGeo : job.location"
           :companyName="job.companyName"
-          :jobApplyUrl="job.url"
-          :jobListDate="job.pubDate"
+          :jobApplyUrl="activeTab === 'api' ? job.url : job.applicationLink"
+          :jobListDate="activeTab === 'api' ? job.pubDate : job.dateCreated"
+          :jobOwner="job.createdBy"
+          :jobId="job.jobId"
           buttonTitle="Read More"
           :activeTab="activeTab"
+          :showPlaceHolder="showPlaceHolder"
         />
       </div>
       <RouterLink

@@ -11,26 +11,14 @@ const props = defineProps({
   description: String,
   location: String,
   companyName: String,
-  companyDescription: String,
-  companyUrl: String,
   jobApplyUrl: String,
   jobListDate: String,
-  buttonTitle: String,
-  activeTab: String,
   jobOwner: String,
-  jobId: String,
-  showPlaceHolder: Boolean
+  jobId: String
 })
 
-const truncateString = (str, num) => {
-  if (str.length > num) {
-    return str.slice(0, num) + '...'
-  } else {
-    return str
-  }
-}
-
 const authStore = useAuthStore()
+
 const jobsStore = useJobsStore()
 const showConfirmationDialog = ref(false)
 const isLoading = ref(false)
@@ -39,19 +27,6 @@ const handleDelete = async () => {
   isLoading.value = true
   await jobsStore.deleteJob(props.jobId, props.title)
   showConfirmationDialog.value = false // Close the dialog after deletion
-}
-
-const getRoute = (activeTab, index) => {
-  if (!authStore.isLoggedIn) {
-    // Redirect to login if not logged in
-    return '/login'
-  }
-
-  if (activeTab === 'api') {
-    return `/jobs/api/${index + 1}`
-  } else {
-    return `/jobs/site/${index + 1}`
-  }
 }
 </script>
 
@@ -63,11 +38,11 @@ const getRoute = (activeTab, index) => {
     @confirm="handleDelete"
   />
   <div
-    class="bg-transparent backdrop-blur text-[#fff] border border-[#fff] px-5 py-10 rounded-[20px] w-full md:w-[40%] lg:w-[30%] flex flex-col gap-4 items-center shadow-md text-center"
+    class="bg-transparent backdrop-blur text-[#fff] border border-[#fff] px-5 py-10 rounded-[20px] w-full md:w-[45%] flex flex-col gap-4 items-center shadow-md text-center"
   >
     <div
-      v-if="activeTab !== 'api' && authStore.isLoggedIn && jobOwner === authStore.userEmail"
       class="flex flex-row gap-4 w-full justify-end"
+      v-if="authStore.isLoggedIn && jobOwner === authStore.userEmail"
     >
       <RouterLink :to="`/edit-job/${title}/${jobId}`">
         <button
@@ -85,30 +60,30 @@ const getRoute = (activeTab, index) => {
         <v-icon name="bi-trash-fill" scale="1.2"></v-icon>
       </button>
     </div>
-    <div v-show="showPlaceHolder && jobOwner !== authStore.userEmail" class="min-h-[36px]"></div>
+    <h4 class="text-[90%] font-bold">{{ jobListDate }}</h4>
     <h2 class="text-xl font-semibold">
       {{ type }}
     </h2>
     <h2 class="text-2xl font-bold min-h-[80px] tracking-[-0.5px]">{{ title }}</h2>
 
-    <p
-      v-if="description"
-      class="text-[80%] mb-2 leading-8 min-h-[150px]"
-      v-html="`${truncateString(description, 150)}`"
-    ></p>
+    <div v-if="description" class="h-[150px] overflow-auto lg:pr-3">
+      <p class="text-[80%] mb-2 leading-8 min-h-[150px]" v-html="`${description}`"></p>
+    </div>
     <p v-else class="text-[90%] mb-2 leading-8 min-h-[120px]">No description available</p>
-    <div class="flex flex-col gap-4">
+    <div class="flex flex-col gap-4 mt-[2rem]">
       <p class="font-semibold">
         <span><v-icon name="io-location-sharp"></v-icon></span>{{ location }}
       </p>
     </div>
-    <RouterLink :to="getRoute(activeTab, index)">
-      <button
-        class="py-3 px-8 rounded-[4px] font-semibold bg-white border border-[#fff] text-[#127780]"
-      >
-        {{ buttonTitle }}
-      </button></RouterLink
-    >
+    <div class="w-full flex justify-center">
+      <a class="font-bold" target="'_blank" :href="`${jobApplyUrl}`">
+        <button
+          class="py-3 px-6 rounded-[4px] font-semibold bg-white border border-[#fff] text-[#127780] text-[90%]"
+        >
+          Application Link <v-icon name="bi-arrow-up-right"></v-icon>
+        </button>
+      </a>
+    </div>
   </div>
 </template>
 

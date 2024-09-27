@@ -28,12 +28,19 @@ const allNavItems = [
 ]
 
 const navItems = computed(() => {
-  return allNavItems.filter(
-    (item) =>
-      item.showAlways ||
-      (authStore.isLoggedIn && item.requiresAuth) ||
-      (!authStore.isLoggedIn && item.requiresAuth === false)
-  )
+  return allNavItems.filter((item) => {
+    if (!authStore.isLoggedIn) {
+      return item.showAlways || item.requiresAuth === false
+    } else {
+      // For logged-in users, check their role
+      if (authStore.userRole === 'Developer') {
+        // Developer can see only 'Home', 'Jobs', and 'Logout'
+        return ['Home', 'Jobs'].includes(item.title)
+      } else if (authStore.userRole === 'Employer') {
+        return item.title !== 'Login' && item.title !== 'Sign up'
+      }
+    }
+  })
 })
 
 const allMobileNavItems = [
@@ -47,12 +54,19 @@ const allMobileNavItems = [
 ]
 
 const mobileNavItems = computed(() => {
-  return allMobileNavItems.filter(
-    (item) =>
-      item.showAlways ||
-      (authStore.isLoggedIn && item.requiresAuth) ||
-      (!authStore.isLoggedIn && item.requiresAuth === false)
-  )
+  return allMobileNavItems.filter((item) => {
+    if (!authStore.isLoggedIn) {
+      return item.showAlways || item.requiresAuth === false
+    } else {
+      // For logged-in users, check their role
+      if (authStore.userRole === 'Developer') {
+        // Developer can see only 'Home', 'Jobs', and 'Logout'
+        return ['Home', 'Jobs', 'Logout'].includes(item.title)
+      } else if (authStore.userRole === 'Employer') {
+        return item.title !== 'Login' && item.title !== 'Sign up'
+      }
+    }
+  })
 })
 
 const handleClickFunction = (clickFunction) => {
@@ -101,7 +115,7 @@ const handleMouseLeave = () => {
           @mouseover="handleMouseOver"
           @mouseleave="handleMouseLeave"
         >
-          Pa
+          {{ authStore.userName.slice(0, 2) }}
         </li>
       </ul>
       <ul
@@ -110,7 +124,7 @@ const handleMouseLeave = () => {
         @mouseover="handleMouseOver"
         @mouseleave="handleMouseLeave"
       >
-        <RouterLink to="/dashboard">
+        <RouterLink to="/dashboard" v-if="authStore.userRole === 'Employer'">
           <li
             @click="handleMouseLeave"
             :class="`font-semibold p-4 hover:bg-[#0d292c] ${isActiveLink('/dashboard') ? 'bg-[#072b2e]' : ''}`"
