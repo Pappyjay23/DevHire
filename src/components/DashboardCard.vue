@@ -1,7 +1,10 @@
 <script setup>
 import { useAuthStore } from '@/stores/auth'
+import { useJobsStore } from '@/stores/jobs'
+import { ref } from 'vue'
+import ConfirmationDialog from './ConfirmationDialog.vue'
 
-defineProps({
+const props = defineProps({
   index: Number,
   title: String,
   type: String,
@@ -16,39 +19,21 @@ defineProps({
 
 const authStore = useAuthStore()
 
-// Delete Job
+const jobsStore = useJobsStore()
+const showConfirmationDialog = ref(false)
 
-// const deleteJob = async (jobId) => {
-//   try {
-//     // Reference to the job in the 'siteJobs' collection
-//     const jobDocRef = doc(db, 'siteJobs', jobId)
-
-//     // Delete the job from 'siteJobs'
-//     await deleteDoc(jobDocRef)
-
-//     // Reference to the user's document
-//     const userDocRef = doc(db, 'users', auth.currentUser.email)
-
-//     // Fetch the user's jobs
-//     const userDocSnapshot = await getDoc(userDocRef)
-//     const userJobs = userDocSnapshot.data().jobs
-
-//     // Filter out the job with the matching jobId from the user's 'jobs' array
-//     const updatedJobs = userJobs.filter((job) => job.jobId !== jobId)
-
-//     // Update the user's document with the new jobs array
-//     await updateDoc(userDocRef, {
-//       jobs: updatedJobs
-//     })
-
-//     console.log('Job deleted successfully from both siteJobs and user document')
-//   } catch (error) {
-//     console.error('Error deleting job:', error.message)
-//   }
-// }
+const handleDelete = async () => {
+  await jobsStore.deleteJob(props.jobId, props.title)
+  showConfirmationDialog.value = false // Close the dialog after deletion
+}
 </script>
 
 <template>
+  <ConfirmationDialog
+    :isVisible="showConfirmationDialog"
+    @cancel="showConfirmationDialog = false"
+    @confirm="handleDelete"
+  />
   <div
     class="bg-transparent backdrop-blur text-[#fff] border border-[#fff] px-5 py-10 rounded-[20px] w-full md:w-[45%] flex flex-col gap-4 items-center shadow-md text-center"
   >
@@ -64,14 +49,13 @@ const authStore = useAuthStore()
           <v-icon name="fa-edit" scale="1.2"></v-icon>
         </button>
       </RouterLink>
-      <RouterLink :to="`/delete-job/${jobId}`">
-        <button
-          title="Delete Job"
-          class="p-[6px] rounded-[4px] font-semibold bg-white border border-[#fff] text-red-600 flex justify-center items-center gap-1"
-        >
-          <v-icon name="bi-trash-fill" scale="1.2"></v-icon>
-        </button>
-      </RouterLink>
+      <button
+        @click="showConfirmationDialog = true"
+        title="Delete Job"
+        class="p-[6px] rounded-[4px] font-semibold bg-white border border-[#fff] text-red-600 flex justify-center items-center gap-1"
+      >
+        <v-icon name="bi-trash-fill" scale="1.2"></v-icon>
+      </button>
     </div>
     <h4 class="text-[90%] font-bold">{{ jobListDate }}</h4>
     <h2 class="text-xl font-semibold">

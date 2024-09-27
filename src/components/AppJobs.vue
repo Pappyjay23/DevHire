@@ -88,7 +88,7 @@ const size = '20px'
       <div v-else class="flex gap-4 w-full justify-center flex-wrap">
         <JobsCard
           v-for="(job, index) in filteredJobs?.slice(0, limit || filteredJobs.length)"
-          :key="job"
+          :key="index"
           :index="index"
           :title="job.jobTitle"
           :type="

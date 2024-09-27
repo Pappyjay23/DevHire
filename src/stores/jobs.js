@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
+import { collection, deleteDoc, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore'
 import { auth, db } from '@/firebase'
 
 export const useJobsStore = defineStore('jobs', {
@@ -74,6 +74,40 @@ export const useJobsStore = defineStore('jobs', {
         }
       } catch (error) {
         console.error('Error fetching user jobs:', error)
+      }
+    },
+    async deleteJob(jobId, jobTitle) {
+      try {
+        // Construct the job document reference based on your naming convention
+        const jobDocRef = doc(db, 'siteJobs', `${jobTitle}-${jobId}`)
+
+        // Delete the job from 'siteJobs'
+        await deleteDoc(jobDocRef)
+
+        // Reference to the user's document
+        const userDocRef = doc(db, 'users', auth.currentUser.email)
+
+        // Fetch the user's document
+        const userDocSnapshot = await getDoc(userDocRef)
+
+        if (userDocSnapshot.exists()) {
+          const userData = userDocSnapshot.data()
+          const userJobs = userData.jobs || [] // Ensure userJobs is defined
+
+          // Filter out the job with the matching jobId from the user's 'jobs' array
+          const updatedJobs = userJobs.filter((job) => job.jobId !== jobId)
+
+          // Update the user's document with the new jobs array
+          await updateDoc(userDocRef, { jobs: updatedJobs })
+
+          console.log('Job deleted successfully from both siteJobs and user document')
+          this.fetchUserJobs()
+          this.fetchSiteJobs()
+        } else {
+          console.log('User document does not exist')
+        }
+      } catch (error) {
+        console.error('Error deleting job:', error.message)
       }
     }
   }

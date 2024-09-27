@@ -5,6 +5,7 @@ import { useJobsStore } from '@/stores/jobs'
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 import { onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import ConfirmationDialog from './ConfirmationDialog.vue'
 
 const jobsStore = useJobsStore()
 const authStore = useAuthStore()
@@ -53,11 +54,24 @@ onMounted(async () => {
   }
 })
 
+const showConfirmationDialog = ref(false)
+
+const handleDelete = async () => {
+  await jobsStore.deleteJob(jobDetails.value.jobId, jobDetails.value.title)
+  showConfirmationDialog.value = false
+  router.push('/jobs')
+}
+
 const color = '#fff'
 const size = '20px'
 </script>
 
 <template>
+  <ConfirmationDialog
+    :isVisible="showConfirmationDialog"
+    @cancel="showConfirmationDialog = false"
+    @confirm="handleDelete"
+  />
   <div
     v-if="job && !jobsStore.isLoading"
     class="bg-transparent backdrop-blur text-[#fff] border border-[#fff] px-5 py-10 rounded-[20px] w-full md:w-[70%] lg:w-[50%] mx-auto shadow-md mt-5"
@@ -72,13 +86,13 @@ const size = '20px'
         >
           <span class="font-medium">Edit</span> <v-icon name="fa-edit" scale="1.2"></v-icon></button
       ></RouterLink>
-      <RouterLink :to="`/delete-job/${jobDetails.jobId}`">
-        <button
-          class="p-[6px] rounded-[4px] bg-white border border-[#fff] text-red-600 flex justify-center items-center gap-1"
-        >
-          <span class="font-medium">Delete</span>
-          <v-icon name="bi-trash-fill" scale="1.2"></v-icon></button
-      ></RouterLink>
+      <button
+        @click="showConfirmationDialog = true"
+        class="p-[6px] rounded-[4px] bg-white border border-[#fff] text-red-600 flex justify-center items-center gap-1"
+      >
+        <span class="font-medium">Delete</span>
+        <v-icon name="bi-trash-fill" scale="1.2"></v-icon>
+      </button>
     </div>
     <div class="lg:w-[80%] mx-auto flex flex-col items-start gap-4">
       <h2 class="text-[1.5rem] md:text-[1.8rem] font-bold text-left tracking-[-1px]">
