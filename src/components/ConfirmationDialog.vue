@@ -1,5 +1,4 @@
 <script setup>
-import { defineProps, defineEmits } from 'vue'
 import PulseLoader from 'vue-spinner/src/ClipLoader.vue'
 
 defineProps({
