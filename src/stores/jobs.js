@@ -10,10 +10,19 @@ export const useJobsStore = defineStore('jobs', {
     siteJobs: [],
     userJobs: [],
     isLoading: false,
-    error: null
+    error: null,
+    lastFetchTime: 0
   }),
   actions: {
     async fetchJobs() {
+      const now = Date.now()
+      const FETCH_INTERVAL = 3600000 // 1 hour in milliseconds
+
+      if (now - this.lastFetchTime < FETCH_INTERVAL) {
+        console.log('Too soon to fetch again. Using cached data.')
+        return
+      }
+
       this.isLoading = true
       this.error = null
 
@@ -23,11 +32,12 @@ export const useJobsStore = defineStore('jobs', {
             count: 20,
             geo: 'usa',
             industry: 'dev'
-            // industry: 'engineering'
           }
         })
 
+        console.log(response.data)
         this.jobs = response.data.jobs
+        this.lastFetchTime = now
       } catch (error) {
         console.error('Error fetching jobs:', error)
         if (axios.isAxiosError(error)) {
@@ -41,7 +51,7 @@ export const useJobsStore = defineStore('jobs', {
     },
 
     // Fetch jobs from Firestore
-    fetchSiteJobs: async function () {
+    async fetchSiteJobs() {
       try {
         // Reference to the 'siteJobs' collection
         const siteJobsCollectionRef = collection(db, 'siteJobs')
@@ -57,6 +67,7 @@ export const useJobsStore = defineStore('jobs', {
         console.error('Error fetching site jobs:', error)
       }
     },
+
     fetchUserJobs() {
       return new Promise((resolve, reject) => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -92,6 +103,7 @@ export const useJobsStore = defineStore('jobs', {
         })
       })
     },
+
     async deleteJob(jobId, jobTitle) {
       try {
         // Construct the job document reference based on your naming convention
