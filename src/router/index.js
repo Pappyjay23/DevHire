@@ -2,7 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 
 const isAuthenticated = () => {
-  return !!localStorage.getItem('user')
+  const auth = localStorage.getItem('auth')
+  const parsedAuth = JSON.parse(auth)
+  return parsedAuth.isLoggedIn
 }
 
 const router = createRouter({
@@ -67,7 +69,7 @@ const router = createRouter({
 // Global before guard
 router.beforeEach((to, from, next) => {
   // Define the routes that do not require authentication
-  const publicRoutes = ['home', 'login', 'sign-up']
+  const publicRoutes = ['home', 'login', 'sign-up', 'not-found']
 
   // Check if the route is public or requires authentication
   if (publicRoutes.includes(to.name) || isAuthenticated()) {
