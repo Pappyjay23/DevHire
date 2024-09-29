@@ -9,10 +9,8 @@ import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 const jobsStore = useJobsStore()
 const authStore = useAuthStore()
 
-onMounted(() => {
-  if (jobsStore.jobs.length === 0) {
-    jobsStore.fetchJobs()
-  }
+onMounted(async () => {
+  await jobsStore.checkAndUpdateJobs()
   jobsStore.fetchSiteJobs()
 })
 

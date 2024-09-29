@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { collection, deleteDoc, doc, getDoc, getDocs, updateDoc } from 'firebase/firestore'
+import { collection, deleteDoc, doc, getDoc, getDocs, updateDoc, setDoc } from 'firebase/firestore'
 import { auth, db } from '@/firebase'
 import { onAuthStateChanged } from 'firebase/auth'
 
@@ -14,15 +14,7 @@ export const useJobsStore = defineStore('jobs', {
     lastFetchTime: 0
   }),
   actions: {
-    async fetchJobs() {
-      const now = Date.now()
-      const FETCH_INTERVAL = 3600000 // 1 hour in milliseconds
-
-      if (now - this.lastFetchTime < FETCH_INTERVAL) {
-        console.log('Too soon to fetch again. Using cached data.')
-        return
-      }
-
+    async fetchJobsAndUpdateFirebase() {
       this.isLoading = true
       this.error = null
 
@@ -35,33 +27,82 @@ export const useJobsStore = defineStore('jobs', {
           }
         })
 
-        console.log(response.data)
-        this.jobs = response.data.jobs
+        console.log('Fetched jobs from API')
+        const jobs = response.data.jobs
+        const now = Date.now()
+
+        // Update Firebase with the new jobs
+        const apiJobsRef = doc(db, 'apiJobs', 'latest')
+        await setDoc(apiJobsRef, {
+          jobs: jobs,
+          lastUpdated: now
+        })
+
         this.lastFetchTime = now
+        this.jobs = jobs
       } catch (error) {
-        console.error('Error fetching jobs:', error)
+        console.error('Error fetching jobs from API:', error)
         if (axios.isAxiosError(error)) {
           this.error = error.response?.data?.error || error.message
         } else {
-          this.error = 'An unexpected error occurred'
+          this.error = 'An unexpected error occurred while fetching jobs from API'
         }
       } finally {
         this.isLoading = false
       }
     },
 
+    async fetchJobsFromFirebase() {
+      this.isLoading = true
+      this.error = null
+
+      try {
+        const apiJobsRef = doc(db, 'apiJobs', 'latest')
+        const apiJobsDoc = await getDoc(apiJobsRef)
+
+        if (apiJobsDoc.exists()) {
+          const data = apiJobsDoc.data()
+          this.jobs = data.jobs
+          this.lastFetchTime = data.lastUpdated
+          console.log('Fetched jobs from Firebase')
+        } else {
+          console.log('No jobs found in Firebase, fetching from API')
+          await this.fetchJobsAndUpdateFirebase()
+        }
+      } catch (error) {
+        console.error('Error fetching jobs from Firebase:', error)
+        this.error = 'An error occurred while fetching jobs from Firebase'
+      } finally {
+        this.isLoading = false
+      }
+    },
+
+    async checkAndUpdateJobs() {
+      try {
+        await this.fetchJobsFromFirebase()
+
+        const now = Date.now()
+        const FETCH_INTERVAL = 86400000 // 24 hours in milliseconds
+
+        if (now - this.lastFetchTime > FETCH_INTERVAL) {
+          console.log('Jobs data is outdated, fetching new data from API')
+          await this.fetchJobsAndUpdateFirebase()
+        } else {
+          console.log('Jobs data is up to date')
+        }
+      } catch (error) {
+        console.error('Error in checkAndUpdateJobs:', error)
+        this.error = 'An error occurred while checking and updating jobs'
+      }
+    },
+
     // Fetch jobs from Firestore
     async fetchSiteJobs() {
       try {
-        // Reference to the 'siteJobs' collection
         const siteJobsCollectionRef = collection(db, 'siteJobs')
-
-        // Fetch all documents from the 'siteJobs' collection
         const siteJobsSnapshot = await getDocs(siteJobsCollectionRef)
-
-        // Map over the documents and store the data
         this.siteJobs = siteJobsSnapshot.docs.map((doc) => ({
-          ...doc.data() // Spread the job data
+          ...doc.data()
         }))
       } catch (error) {
         console.error('Error fetching site jobs:', error)
@@ -71,20 +112,14 @@ export const useJobsStore = defineStore('jobs', {
     fetchUserJobs() {
       return new Promise((resolve, reject) => {
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
-          unsubscribe() // Unsubscribe immediately after getting the auth state
-
+          unsubscribe()
           if (user) {
             try {
-              // Reference to the current user's document in 'users' collection
               const userDocRef = doc(db, 'users', user.email)
-
-              // Fetch the user's document
               const userDocSnapshot = await getDoc(userDocRef)
-
               if (userDocSnapshot.exists()) {
-                // Extract the 'jobs' array from the user document
                 const userData = userDocSnapshot.data()
-                this.userJobs = userData.jobs || [] // If no jobs, default to an empty array
+                this.userJobs = userData.jobs || []
                 resolve(this.userJobs)
               } else {
                 console.log('User document does not exist')
@@ -106,26 +141,16 @@ export const useJobsStore = defineStore('jobs', {
 
     async deleteJob(jobId, jobTitle) {
       try {
-        // Construct the job document reference based on your naming convention
         const jobDocRef = doc(db, 'siteJobs', `${jobTitle}-${jobId}`)
-
-        // Delete the job from 'siteJobs'
         await deleteDoc(jobDocRef)
 
-        // Reference to the user's document
         const userDocRef = doc(db, 'users', auth.currentUser.email)
-
-        // Fetch the user's document
         const userDocSnapshot = await getDoc(userDocRef)
 
         if (userDocSnapshot.exists()) {
           const userData = userDocSnapshot.data()
-          const userJobs = userData.jobs || [] // Ensure userJobs is defined
-
-          // Filter out the job with the matching jobId from the user's 'jobs' array
+          const userJobs = userData.jobs || []
           const updatedJobs = userJobs.filter((job) => job.jobId !== jobId)
-
-          // Update the user's document with the new jobs array
           await updateDoc(userDocRef, { jobs: updatedJobs })
 
           this.fetchUserJobs()
